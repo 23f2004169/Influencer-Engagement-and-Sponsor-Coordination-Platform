@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h2> New Ad requests </h2>
+    <table id="ongoing-campaigns">
+        <tr>
+            <th>Adrequest id</th>
+            <th>Campaign id</th>
+            <th>Influencer id</th>
+            <th>Status</th>
+            <th>Payment amount</th>
+            <th>Negotiation message</th>
+            
+        </tr>
+        {%for i in adreq%} 
+            <tr>
+                <td>{{i.adreq_id}}</td>
+                <td>{{i.camp_id}}</td>
+                <td>{{i.inf_id}}</td>
+                <td>{{i.status}}</td>
+                <td>{{i.pay_amount}}</td>
+                <td>{{i.messages}}</td>
+                <td><a href="{{url_for('inf_ad_details',adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View</a></td>
+                <td><a href="{{url_for('inf_adaccept', adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Accept</a></td>
+                <td><a href="{{url_for('inf_adreject', adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Reject</a></td>
+                <td><a href="{{url_for('negotiate', adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Negotiate</a></td>
+            </tr>
+        {%endfor%}
+    </table>
+    <a href="{{url_for('spon_dashboard',spon_id=spon.spon_id) }}"><button class="btn btn-outline-success" type="button">Go back</button></a>
+
+    
+    
+</body>
+</html>

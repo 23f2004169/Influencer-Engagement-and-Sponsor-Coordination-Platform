@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"crossorigin="anonymous"></script>
+</head>
+<body>
+    <style>
+        body {
+            padding-top: 70px;
+            background-color: #eaea96;}
+        h1, h2 {margin-top: 20px;}
+        table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
+        .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
+        .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    </style>
+
+    <h1>Welcome {{spon.spon_name}}</h1>
+    <h2>Ongoing Campaigns</h2>
+
+
+    <nav class="navbar bg-body-tertiary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">SPONSOR DASHBOARD</a>
+            <a href="/find_details"><button class="btn btn-outline-success" type="button">FIND-Search for Campaigns</button></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarlabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DETAILS </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">CAMPAIGN MANAGEMENT</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{url_for('create_camp',spon_id=spon.spon_id) }}">Create campaigns</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('delete_camp',spon_id=spon.spon_id) }}">Delete campaigns</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('update_camp',spon_id=spon.spon_id) }}"> Update campaigns</a></li>
+                            </ul>
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">AD MANAGEMENT</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{url_for('create_ad',spon_id=spon.spon_id) }}">Create Ad-request</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('delete_ad',spon_id=spon.spon_id) }}">Delete Ad-request</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('update_ad',spon_id=spon.spon_id) }}"> Update Ad-request</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">STATISTICS</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="/spon_login"><button class="btn btn-danger">Logout</button></a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+        {% for i in camps %}
+            {{i.spon_id}}
+            {%if i.spon_id==spon.spon_id%}
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{i.camp_name}}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">{{i.description}}</h6>
+                    <select name="" id="" class="form-select">
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{{i.camp_ads}}</h6>
+                        {% for ad in i.camp_ads %}
+                            <option><a href="{{url_for('spon_ad_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">Adrequest no:{{ad.adreq_id}}:{{ad.requirements}}</option>View</a>
+                        {%endfor%}
+                    </select>
+                    <a href="{{url_for('spon_camp_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View</a>
+                </div>
+            </div>
+            {%endif%}
+        {%endfor%}
+    </div>
+
+
+
+
+</body>
+</html>

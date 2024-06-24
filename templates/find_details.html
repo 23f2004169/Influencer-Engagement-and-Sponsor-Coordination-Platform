@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <form method="POST" action="{{ url_for('find_details') }}">
+            <div class="form-group">
+                <label for="find_details" class="form-label">Enter User or Campaign ID:</label>
+                <input type="integer" name="find_details" id="find_details" class="form-control">
+            </div>  
+            <button type="submit" class="btn btn-outline-success mt-3">Search</button>
+        </form>
+        <a>Id guide:</a>
+        
+    </div>
+</body>
+</html>
