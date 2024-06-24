@@ -526,6 +526,8 @@ def spon_ad_details(adreq_id,spon_id):
     adreq=Adrequest.query.get(adreq_id)
     if request.method=="GET":
         return render_template("spon_ad_details.html",adreq=adreq,spon=spon)
+    return render_template("spon_ad_details.html",adreq=adreq,spon=spon)
+
     
 '''@app.route("/adrequest/<spon_id>/new_adreq",methods=["GET","POST"])
 def camp_adreq(spon_id):
