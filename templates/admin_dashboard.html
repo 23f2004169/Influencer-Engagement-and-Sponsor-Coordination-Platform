@@ -18,9 +18,6 @@
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
 </style>
 <body>
-   <a href="/ongoing_camp"><button class="btn btn-primary">CLICK TO VIEW ONGOING CAMPAIGNS</button></a>
-     
-    <!--<a href="{{url_for('ongoing_camp', current_date=current_date) }}" type="button">View</a>-->
     <div class="container mt-5">
         <h2>Flagged Campaigns</h2>
         <div class="row">
@@ -82,6 +79,8 @@
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">ADMIN DASHBOARD</a>
+            <a href="/ongoing_camp"><button class="btn btn-primary">ONGOING CAMPAIGNS</button></a>
+
             <a href="find_details"><button class="btn btn-outline-success" type="button">FIND-Search for Campaigns, Sponsors, Influencers</button></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -94,7 +93,7 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" aria-current="page" href="/admin_dashboard">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">VIEW ALL</a>

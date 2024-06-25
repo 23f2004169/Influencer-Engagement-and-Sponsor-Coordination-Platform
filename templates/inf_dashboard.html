@@ -27,14 +27,15 @@
     <a href="{{url_for('update_inf',inf_id=inf.inf_id) }}"><button class="btn btn-info">Update profile</button></a>
 
     <a href="{{url_for('earnings',inf_id=inf.inf_id) }}"><button class="btn btn-primary">Earnings   {{earned}}</button></a>
-    <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">CLICK TO VIEW ACTIVE PUBLIC CAMPAIGNS</button></a>
-    <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
+   
 
 
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
             <a href="/find_details"><button class="btn btn-outline-success" type="button">FIND-Search for Campaigns</button></a>
+            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
+            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
             <li class="nav-item"><a href="/"><button class="btn btn-primary">STATS</button></a></li>
             <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
         </div>

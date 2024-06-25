@@ -7,6 +7,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+    <style>
+        body {
+            padding-top: 70px;
+            background-color: #eaea96;}
+        h1, h2 {margin-top: 20px;}
+        table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
+        .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
+        .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    </style>
+    <nav class="navbar bg-body-tertiary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
+            <a href="{{url_for('inf_dashboard',inf_id=inf.inf_id) }}"><button class="btn btn-primary">Profile</button></a>
+            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
+            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
+            <li class="nav-item"><a href="/"><button class="btn btn-primary">STATS</button></a></li>
+            <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
+        </div>
+    </nav>
     <div class="container mt-5">
         <form method="POST" action="{{ url_for('find_details') }}">
             <div class="form-group">

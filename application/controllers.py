@@ -314,7 +314,7 @@ def negotiate(inf_id,adreq_id):
         infid=request.form.get("inf_id")
         inf_msg=request.form.get("messages")
         if inf_id==infid:
-            ad.messages=inf_msg
+            ad.messages+= ' '+ inf_msg
         print(inf_msg)
         db.session.commit()
         for x in inf.inf_req:
@@ -585,7 +585,7 @@ def spon_negotiate(spon_id,adreq_id):
         sponid=request.form.get("spon_id")
         spon_msg=request.form.get("messages") 
         if spon.spon_id==sponid:
-            ad.messages=spon_msg
+            ad.messages+="\n" + spon_msg
         db.session.commit()
         return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
