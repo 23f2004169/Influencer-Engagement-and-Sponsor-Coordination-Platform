@@ -392,14 +392,19 @@ def spon_dashboard(spon_id):
     if not logged_spon:
         return redirect(url_for("spon_login"))
     spon=Sponsor.query.get(spon_id) 
-    inf=Influencer.query.all() 
     adreq=Adrequest.query.all()
-    #camps = Campaign.query.filter_by(spon_id=spon_id)
-    #for i in spon.spon_camp:
-        #print(i.camp_id)
+    ongoingcamps=[]
+    for x in spon.spon_camp:
+        start_date=datetime.strptime(x.start_date,'%d-%m-%Y').date()
+        end_date=datetime.strptime(x.end_date,'%d-%m-%Y').date()
+        current_date=datetime.now().date()
+        print(start_date,end_date,current_date)
+        if start_date<=current_date and  end_date>=current_date :
+            ongoingcamps.append(x)
+    print(ongoingcamps)
     if request.method=="GET":
-        return render_template("spon_dashboard.html",spon=spon,inf=inf,adreq=adreq)
-    return render_template("spon_dashboard.html",spon=spon,inf=inf,adreq=adreq)
+        return render_template("spon_dashboard.html",spon=spon,camps=ongoingcamps,adreq=adreq)
+    return render_template("spon_dashboard.html",spon=spon,camps=ongoingcamps,adreq=adreq)
 
 
 
@@ -556,34 +561,22 @@ def spon_ad_details(adreq_id,spon_id):
 
 @app.route('/sponsor/<int:adreq_id>/<spon_id>/adaccept',methods=['GET','POST'])
 def spon_adaccept(adreq_id,spon_id):
-    newlist=[]
     spon=Sponsor.query.get(spon_id)
     ad=Adrequest.query.get(adreq_id)
     ad.status="accepted"
     db.session.commit()
-    for camp in spon.spon_camp:
-        for x in camp.camp_ads:
-            if x.status=="pending":
-                newlist.append(x)
-    print(newlist)
-    return render_template("spon_ad_details.html",spon=spon,adreq=newlist)
+    return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
 @app.route('/sponsor/<int:adreq_id>/<spon_id>/adreject',methods=['GET','POST'])
 def spon_adreject(adreq_id,spon_id):
-    newlist=[]
     spon=Sponsor.query.get(spon_id)
     ad=Adrequest.query.get(adreq_id)
     ad.status="rejected"
     db.session.commit()
-    for camp in spon.spon_camp:
-        for x in camp.camp_ads:
-            if x.status=="pending":
-                newlist.append(x)
-    return render_template("spon_ad_details.html",spon=spon,adreq=newlist)
+    return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
 @app.route('/sponsor/<spon_id>/<int:adreq_id>/negotiate',methods=["GET","POST"])
 def spon_negotiate(spon_id,adreq_id):
-    newlist=[]   
     spon=Sponsor.query.get(spon_id)
     ad=Adrequest.query.get(adreq_id)
     if request.method=="GET":
@@ -593,41 +586,13 @@ def spon_negotiate(spon_id,adreq_id):
         spon_msg=request.form.get("messages") 
         if spon.spon_id==sponid:
             ad.messages=spon_msg
-        print(spon_msg)
         db.session.commit()
-        for camp in spon.spon_camp:
-            for x in camp.camp_ads:
-                if x.status=="pending":
-                    newlist.append(x)
-        return render_template("spon_ad_details.html",spon=spon,adreq=newlist)
+        return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
-#manage new ads page
-@app.route("/adrequest/<spon_id>/camp_adreq",methods=["GET","POST"])
-def camp_adreq(spon_id):
-    newlist=[]
-    spon=Sponsor.query.get(spon_id)
-    for x in spon.spon_camp:
-        if x.status=="pending":
-            newlist.append(x)
-        #print(newlist)
-    return render_template('camp_adreq.html',adreq=newlist,spon=spon)
 
-#ongoing camps
-@app.route("/spon_ongoing_camp/<spon_id>",methods=["GET"])
-def spon_ongoing_camp(spon_id):
-    camp=Campaign.query.all()
-    spon=Sponsor.query.get(spon_id)
-    camplist=[]
-    for x in camp:
-        start_date=datetime.strptime(x.start_date,'%d-%m-%Y').date()
-        end_date=datetime.strptime(x.end_date,'%d-%m-%Y').date()
-        current_date=datetime.now().date()
-        print(start_date,end_date,current_date)
-        if start_date<=current_date and  end_date>=current_date and x.spon_id==spon_id:
-            camplist.append(x)
-    return render_template('spon_ongoing_camp.html',camp=camplist,spon=spon)
 
-        
+
+    
 
 
     
