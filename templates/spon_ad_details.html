@@ -23,8 +23,11 @@
         <div class="detail"><strong>Influencer ID:</strong> {{adreq.inf_id}}</div>
         <div class="detail"><strong>Requiremensts:</strong> {{adreq.requirements}}</div>
         <div class="detail"><strong>Payment amount:</strong> {{adreq.pay_amount}}</div>
+        <div class="detail"><strong>Status:</strong> {{adreq.status}}</div>
         <div class="detail"><strong>Negotiation message:</strong> {{adreq.messages}}</div>
-        
+        <a href="{{url_for('spon_adaccept', adreq_id=adreq.adreq_id,spon_id=spon.spon_id)}}" class="btn btn-primary" type="button">Accept</a>
+        <a href="{{url_for('spon_adreject', adreq_id=adreq.adreq_id,spon_id=spon.spon_id)}}" class="btn btn-primary" type="button">Reject</a>
+        <a href="{{url_for('spon_negotiate', adreq_id=adreq.adreq_id,spon_id=spon.spon_id)}}" class="btn btn-primary" type="button">Negotiate</a>
         <a href="{{url_for('spon_dashboard',spon_id=spon.spon_id) }}"><button class="btn btn-outline-success" type="button">Go back</button></a>
 
     </div>

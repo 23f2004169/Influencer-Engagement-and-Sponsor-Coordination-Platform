@@ -20,6 +20,11 @@
 
     <h1>Welcome {{spon.spon_name}}</h1>
     <h2>Ongoing Campaigns</h2>
+    <a href="{{url_for('spon_ongoing_camp',spon_id=spon.spon_id)}}"><button class="btn btn-primary">CLICK TO VIEW ONGOING CAMPAIGNS</button></a>
+ 
+    <h2>Manage Ad requests </h2>
+    <a href="{{url_for('camp_adreq',spon_id=spon.spon_id)}}"><button class="btn btn-primary">Manage Ad requests</button></a>
+
 
 
     <nav class="navbar bg-body-tertiary fixed-top">
@@ -66,27 +71,25 @@
             </div>
         </div>
     </nav>
+    <h2>Campaigns sponsored by you</h2>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-        {% for i in camps %}
-            {{i.spon_id}}
-            {%if i.spon_id==spon.spon_id%}
+    <div class="card" style="width: 18rem;">
+        {% for i in spon.spon_camp %}
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">{{i.camp_name}}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">{{i.description}}</h6>
-                    <select name="" id="" class="form-select">
-                        <h6 class="card-subtitle mb-2 text-body-secondary">{{i.camp_ads}}</h6>
-                        {% for ad in i.camp_ads %}
-                            <option><a href="{{url_for('spon_ad_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">Adrequest no:{{ad.adreq_id}}:{{ad.requirements}}</option>View</a>
+                    <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                    <p class="card-text"></p>{{i.description}}</p>
+                       {% for ad in i.camp_ads %}
+                        <a href="{{url_for('spon_ad_details',adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
                         {%endfor%}
-                    </select>
-                    <a href="{{url_for('spon_camp_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View</a>
+                    
+                    <a href="{{url_for('spon_camp_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                 </div>
             </div>
-            {%endif%}
         {%endfor%}
     </div>
-
+    
+   
 
 
 

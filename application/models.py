@@ -36,7 +36,6 @@ class Adrequest(db.Model):
     requirements=db.Column(db.String)
     pay_amount=db.Column(db.Integer,nullable=False)
     status=db.Column(db.String,nullable=False)
-    req_inf=db.relationship('Influencer')
 
 class Campaign(db.Model):
     __tablename__="campaign"

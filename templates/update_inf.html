@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+        <h1>Update profile</h1>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+            <form method="post">
+                <input type="text" class="form-control" id="inf_name" value="{{i.inf_name}}" name="inf_name" placeholder="Influencer name"required>
+                <input type="text" class="form-control" id="inf_passsword" value="{{i.inf_passsword}}"  name="inf_passsword" placeholder="Password" >
+                <input type="text" class="form-control" id="inf_category" value="{{i.inf_category}}" name="inf_category" placeholder="Category"  >
+                <input type="text" class="form-control" id="inf_niche" value="{{i.inf_niche}}" name="inf_niche" placeholder="Niche">
+                <input type="text" class="form-control" id="inf_reach" value="{{i.inf_reach}}" name="inf_reach" placeholder="Reach">
+                <input type="text" class="form-control" id="rating" value="{{i.rating}}" name="rating" placeholder="Rating">
+                <input type="number" value="{{i.inf_id}}" readonly hidden name="inf_id">     
+                <button type="submit" class="btn btn-primary">Update</button>
+ 
+            </form>
+             </div>
+        </div>
+    </div>
+</body>
+</html>

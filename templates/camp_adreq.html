@@ -27,10 +27,10 @@
                 <td>{{i.status}}</td>
                 <td>{{i.pay_amount}}</td>
                 <td>{{i.messages}}</td>
-                <td><a href="{{url_for('inf_ad_details',adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View</a></td>
-                <td><a href="{{url_for('inf_adaccept', adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Accept</a></td>
-                <td><a href="{{url_for('inf_adreject', adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Reject</a></td>
-                <td><a href="{{url_for('negotiate', adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Negotiate</a></td>
+                <td><a href="{{url_for('spon_ad_details',adreq_id=i.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View</a></td>
+                <td><a href="{{url_for('spon_adaccept', adreq_id=i.adreq_id,spon_id=spon.spon_id )}}" class="btn btn-primary" type="button">Accept</a></td>
+                <td><a href="{{url_for('spon_adreject', adreq_id=i.adreq_id,spon_id=spon.spon_id )}}" class="btn btn-primary" type="button">Reject</a></td>
+                <td><a href="{{url_for('camp_negotiate', adreq_id=i.adreq_id,spon_id=spon.spon_id )}}" class="btn btn-primary" type="button">Negotiate</a></td>
             </tr>
         {%endfor%}
     </table>

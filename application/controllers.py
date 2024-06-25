@@ -321,6 +321,31 @@ def negotiate(inf_id,adreq_id):
             if x.status=="pending":
                 newlist.append(x)
         return render_template("new_adreq.html",inf=inf,adreq=newlist)
+@app.route("/update_inf/<inf_id>",methods=["GET", "POST"])
+def update_inf(inf_id):
+    global logged_inf
+    if not logged_inf:
+        return redirect(url_for("inf_login"))
+    if request.method=="GET":
+        inf=Influencer.query.get(inf_id)
+        return render_template("update_inf.html",i=inf)
+    if request.method=="POST":
+        inf_name=request.form.get("inf_name")
+        inf_passsword=request.form.get("inf_password")
+        inf_category=request.form.get("inf_category")
+        inf_niche=request.form.get("inf_niche")
+        inf_reach=request.form.get("inf_reach")
+        rating=request.form.get("rating")
+        update_inf=Influencer.query.get(inf_id)
+        update_inf.inf_name=inf_name       
+        update_inf.inf_passsword=inf_passsword
+        update_inf.inf_category=inf_category
+        update_inf.inf_niche=inf_niche
+        update_inf.inf_reach=inf_reach
+        update_inf.rating=rating
+        db.session.commit()
+        return redirect(url_for("inf_dashboard",inf_id=inf_id))
+
 
 @app.route('/spon_reg', methods=['GET','POST'])
 def spon_reg():
@@ -370,12 +395,12 @@ def spon_dashboard(spon_id):
     inf=Influencer.query.all() 
     adreq=Adrequest.query.all()
     #camps = Campaign.query.filter_by(spon_id=spon_id)
-    print(spon)
-    for i in spon.spon_camp:
-        print(i.camp_id)
+    #for i in spon.spon_camp:
+        #print(i.camp_id)
     if request.method=="GET":
         return render_template("spon_dashboard.html",spon=spon,inf=inf,adreq=adreq)
     return render_template("spon_dashboard.html",spon=spon,inf=inf,adreq=adreq)
+
 
 
 @app.route("/create_camp/<spon_id>",methods=["GET", "POST"])
@@ -524,22 +549,83 @@ def spon_camp_details(camp_id,spon_id):
 def spon_ad_details(adreq_id,spon_id):
     spon=Sponsor.query.get(spon_id)
     adreq=Adrequest.query.get(adreq_id)
+    camps=Campaign.query.all()
     if request.method=="GET":
-        return render_template("spon_ad_details.html",adreq=adreq,spon=spon)
-    return render_template("spon_ad_details.html",adreq=adreq,spon=spon)
+        return render_template("spon_ad_details.html",adreq=adreq,spon=spon,camp=camps)
+    return render_template("spon_ad_details.html",adreq=adreq,spon=spon,camp=camps)
 
-    
-'''@app.route("/adrequest/<spon_id>/new_adreq",methods=["GET","POST"])
+@app.route('/sponsor/<int:adreq_id>/<spon_id>/adaccept',methods=['GET','POST'])
+def spon_adaccept(adreq_id,spon_id):
+    newlist=[]
+    spon=Sponsor.query.get(spon_id)
+    ad=Adrequest.query.get(adreq_id)
+    ad.status="accepted"
+    db.session.commit()
+    for camp in spon.spon_camp:
+        for x in camp.camp_ads:
+            if x.status=="pending":
+                newlist.append(x)
+    print(newlist)
+    return render_template("spon_ad_details.html",spon=spon,adreq=newlist)
+
+@app.route('/sponsor/<int:adreq_id>/<spon_id>/adreject',methods=['GET','POST'])
+def spon_adreject(adreq_id,spon_id):
+    newlist=[]
+    spon=Sponsor.query.get(spon_id)
+    ad=Adrequest.query.get(adreq_id)
+    ad.status="rejected"
+    db.session.commit()
+    for camp in spon.spon_camp:
+        for x in camp.camp_ads:
+            if x.status=="pending":
+                newlist.append(x)
+    return render_template("spon_ad_details.html",spon=spon,adreq=newlist)
+
+@app.route('/sponsor/<spon_id>/<int:adreq_id>/negotiate',methods=["GET","POST"])
+def spon_negotiate(spon_id,adreq_id):
+    newlist=[]   
+    spon=Sponsor.query.get(spon_id)
+    ad=Adrequest.query.get(adreq_id)
+    if request.method=="GET":
+        return render_template("spon_negotiate.html",spon=spon,adreq=ad)
+    if request.method=="POST":
+        sponid=request.form.get("spon_id")
+        spon_msg=request.form.get("messages") 
+        if spon.spon_id==sponid:
+            ad.messages=spon_msg
+        print(spon_msg)
+        db.session.commit()
+        for camp in spon.spon_camp:
+            for x in camp.camp_ads:
+                if x.status=="pending":
+                    newlist.append(x)
+        return render_template("spon_ad_details.html",spon=spon,adreq=newlist)
+
+#manage new ads page
+@app.route("/adrequest/<spon_id>/camp_adreq",methods=["GET","POST"])
 def camp_adreq(spon_id):
     newlist=[]
     spon=Sponsor.query.get(spon_id)
-    for x in spon.spon_req:
+    for x in spon.spon_camp:
         if x.status=="pending":
             newlist.append(x)
         #print(newlist)
-    return render_template('new_adreq.html',adreq=newlist,inf=inf)'''
+    return render_template('camp_adreq.html',adreq=newlist,spon=spon)
 
-
+#ongoing camps
+@app.route("/spon_ongoing_camp/<spon_id>",methods=["GET"])
+def spon_ongoing_camp(spon_id):
+    camp=Campaign.query.all()
+    spon=Sponsor.query.get(spon_id)
+    camplist=[]
+    for x in camp:
+        start_date=datetime.strptime(x.start_date,'%d-%m-%Y').date()
+        end_date=datetime.strptime(x.end_date,'%d-%m-%Y').date()
+        current_date=datetime.now().date()
+        print(start_date,end_date,current_date)
+        if start_date<=current_date and  end_date>=current_date and x.spon_id==spon_id:
+            camplist.append(x)
+    return render_template('spon_ongoing_camp.html',camp=camplist,spon=spon)
 
         
 
