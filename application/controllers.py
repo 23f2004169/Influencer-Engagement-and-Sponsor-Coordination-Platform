@@ -608,6 +608,14 @@ def spon_negotiate(spon_id,adreq_id):
         db.session.commit()
         return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
+@app.route("/rate/<inf_id>",methods=["GET","POST"])
+def rate(inf_id):
+    if request.method=="GET":
+        return render_template("rate.html")
+    #if request.method=="POST":
+        #inf=Influencer.query.get(inf_id)
+
+
 @app.route("/admin_summary",methods=["GET"])
 def admin_summary():
     global logged_admin
@@ -617,7 +625,30 @@ def admin_summary():
     ads=Adrequest.query.all()
     spons=Sponsor.query.all()
     infs=Influencer.query.all()
-    return render_template("admin_summary.html",camps=camps,spons=spons,infs=infs,ads=ads)
+    adacpt=0
+    adrej=0
+    adpend=0
+    for i in ads:
+        if i.status=="accepted":
+            adacpt+=1
+        if i.status=="rejected":
+            adrej+=1
+        if i.status=="pending":
+            adpend+=1
+    print(adacpt,adrej,adpend)  
+    unsp,fsp,uninf,finf=0,0,0,0
+    for i in spons:
+        if i.flagged==0:
+            unsp+=1
+        else:
+            fsp+=1  
+    for i in infs:
+        if i.flagged==0:
+            uninf+=1
+        else:
+            finf+=1
+        
+    return render_template("admin_summary.html",unsp=unsp,fsp=fsp,uninf=uninf,finf=finf,adacpt=adacpt,adrej=adrej,adpend=adpend,camps=camps,spons=spons,infs=infs,ads=ads)
 
 
 
