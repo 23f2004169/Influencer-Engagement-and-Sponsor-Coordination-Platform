@@ -1,6 +1,5 @@
-from flask import current_app as app
-from flask import request
-from flask import render_template,url_for,redirect
+from flask import current_app as app #alias for current running app
+from flask import render_template,url_for,redirect,request
 from application.models import *
 from datetime import datetime,date
 
@@ -189,10 +188,20 @@ def inf_reg():
         inf_niche=request.form.get("inf_niche")
         inf_reach=request.form.get("inf_reach")
         rating=request.form.get("rating")
-        new_inf=Influencer(inf_id=inf_id,inf_name=inf_name,inf_password=inf_password, inf_category= inf_category,inf_niche=inf_niche,inf_reach=inf_reach,rating=rating)
-        db.session.add(new_inf)
-        db.session.commit()
-        return redirect(url_for("inf_dashboard",inf_id=inf_id))
+        try:
+            exist=Influencer.query.filter_by(inf_id=inf_id).first()
+            if exist:
+                return render_template("inf_reg.html",message="Influencer username already exists")
+            else:
+                new_inf=Influencer(inf_id=inf_id,inf_name=inf_name,inf_password=inf_password, inf_category= inf_category,inf_niche=inf_niche,inf_reach=inf_reach,rating=rating)
+                db.session.add(new_inf)
+                db.session.commit()
+                global logged_inf
+                logged_inf=inf_id
+                return redirect(url_for("inf_dashboard",inf_id=inf_id))
+        except:
+            return "some error"
+    return render_template("inf_reg.html")
     
 @app.route("/inf_login",methods=["GET","POST"])
 def inf_login():
@@ -314,7 +323,7 @@ def negotiate(inf_id,adreq_id):
         infid=request.form.get("inf_id")
         inf_msg=request.form.get("messages")
         if inf_id==infid:
-            ad.messages+= ' '+ inf_msg
+            ad.messages+="//Influencer-"+infid +':'+ inf_msg+"//"
         print(inf_msg)
         db.session.commit()
         for x in inf.inf_req:
@@ -357,10 +366,20 @@ def spon_reg():
         spon_password=request.form.get("spon_password")
         spon_industry=request.form.get("spon_industry")
         spon_budget=request.form.get("spon_budget")
-        new_spon=Sponsor(spon_id=spon_id,spon_name=spon_name,spon_password=spon_password, spon_industry=spon_industry,spon_budget=spon_budget)
-        db.session.add(new_spon)
-        db.session.commit()
-        return redirect(url_for("spon_dashboard",spon_id=spon_id))
+        try:
+            exist=Sponsor.query.filter_by(spon_id=spon_id).first()
+            if exist:
+                return render_template("spon_reg.html",message="Sponsor username already exists")
+            else:
+                new_spon=Sponsor(spon_id=spon_id,spon_name=spon_name,spon_password=spon_password, spon_industry=spon_industry,spon_budget=spon_budget)
+                db.session.add(new_spon)
+                db.session.commit()
+                global logged_spon
+                logged_spon=spon_id
+                return redirect(url_for("spon_dashboard",spon_id=spon_id))
+        except:
+            return "some error"
+    return render_template("spon_reg.html")
     
 @app.route("/spon_login",methods=["GET","POST"])
 def spon_login():
@@ -585,10 +604,20 @@ def spon_negotiate(spon_id,adreq_id):
         sponid=request.form.get("spon_id")
         spon_msg=request.form.get("messages") 
         if spon.spon_id==sponid:
-            ad.messages+="\n" + spon_msg
+            ad.messages+="//Sponsor-"+sponid+ ":" + spon_msg+"//"
         db.session.commit()
         return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
+@app.route("/admin_summary",methods=["GET"])
+def admin_summary():
+    global logged_admin
+    if not logged_admin:
+        return redirect(url_for('admin_login'))
+    camps=Campaign.query.all()
+    ads=Adrequest.query.all()
+    spons=Sponsor.query.all()
+    infs=Influencer.query.all()
+    return render_template("admin_summary.html",camps=camps,spons=spons,infs=infs,ads=ads)
 
 
 

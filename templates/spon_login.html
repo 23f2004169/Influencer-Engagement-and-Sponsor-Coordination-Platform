@@ -16,17 +16,18 @@
             
         </div>
     <h1>Sponsor login page</h1>
-    {%if message%}
-        <h1>{{message}}</h1>
-    {%endif%}
+    
     <form method="post">
         <label for="spon_id">Enter Sponsor username:</label>
         <input type="text" name="spon_id" id="spon_id" class="form-control">
         <label for="spon_password" class="form-label">Enter Sponsor password:</label>
         <input type="text" name="spon_password" id="spon_password" class="form-control">
         <button type="submit" class="btn btn-primary">Submit</button>
-        
+    {%if message%}
+    <h1>{{message}}</h1>
+    {%endif%} 
     </form> 
-    </div>    
+    </div>   
+   
 </body>
 </html>

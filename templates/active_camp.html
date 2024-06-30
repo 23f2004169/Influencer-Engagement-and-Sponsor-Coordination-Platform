@@ -37,7 +37,9 @@
                         <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
                         <p class="card-text"></p>{{i.description}}</p>
                            {% for ad in i.camp_ads %}
+                           {%if ad.status=='pending'%}
                             <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+                            {%endif%}
                             {%endfor%}
                         
                         <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View campaign details</a>

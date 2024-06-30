@@ -16,16 +16,15 @@
             
         </div>
     <h1>Influencer login page</h1>
-    {%if message%}
-        <h1>{{message}}</h1>
-    {%endif%}
     <form method="post">
         <label for="inf_id">Enter Influencer username:</label>
         <input type="text" name="inf_id" id="inf_id" class="form-control">
         <label for="inf_password" class="form-label">Enter Influencer password:</label>
         <input type="text" name="inf_password" id="inf_password" class="form-control">
         <button type="submit" class="btn btn-primary">Submit</button>
-        
+    {%if message%}
+        <h1>{{message}}</h1>
+    {%endif%}
     </form> 
     </div>    
 </body>
