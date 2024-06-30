@@ -65,22 +65,13 @@
             </div>
         </div>
     </nav>
-    <h2>Ongoing Campaigns sponsored by you</h2>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-    <div class="card" style="width: 18rem;">
-        {% for i in camps%}
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
-                    <p class="card-text"></p>{{i.description}}</p>
-                       {% for ad in i.camp_ads %}
-                        <a href="{{url_for('spon_ad_details',adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
-                        {%endfor%}
-                    
-                    <a href="{{url_for('spon_camp_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
-                </div>
-            </div>
-        {%endfor%}
+        <h1>Search based on Campaign name</h1>
+        <form method="post" class="card p-5" style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+            <label class="form-label" for="camp_name">Enter the Campaign name:</label>
+            <input class="form-control" type="text" name="camp_name" id="camp_name" required>
+            <button class="btn btn-primary" type="submit" style="width: 10%;">Search</button>
+        </form>
     </div>
 
 </body>

@@ -2,6 +2,8 @@ from flask import current_app as app #alias for current running app
 from flask import render_template,url_for,redirect,request
 from application.models import *
 from datetime import datetime,date
+#import simplejson as json
+import decimal
 
 logged_admin=None
 logged_inf=None
@@ -115,28 +117,6 @@ def adreq_status():
             adstatus.append(i)
     return render_template("adreq_status.html",adreq=adstatus)
 
-@app.route("/find_details",methods=["GET","POST"])
-def find_details():
-    if request.method=="GET":
-        return render_template("find_details.html")
-    if request.method=="POST":
-        find_id=request.form.get("find_details")
-        try:
-            c=Campaign.query.get(find_id)
-            i=Influencer.query.get(find_id)
-            s=Sponsor.query.get(find_id)
-            if c:
-                return render_template("camp_details.html",camp=c)
-            if s:
-                return render_template("spon_details.html",spon=s)
-            if i:
-                return render_template("inf_details.html",inf=i)
-                
-            else:
-                return render_template("find_details.html",message="Id incorrect")
-        except:
-            return render_template("find_details.html",message="Id failed")
-
 @app.route("/campaign/<int:camp_id>",methods=["GET","POST"])
 def camp_details(camp_id):
     camp=Campaign.query.get(camp_id)
@@ -144,6 +124,12 @@ def camp_details(camp_id):
         return render_template("camp_details.html",camp=camp)
     if request.method=="POST":
         return url_for('/camp_flag',camp=camp)
+    
+@app.route("/adrequest/<int:adreq_id>",methods=["GET","POST"])
+def ad_details(adreq_id):
+    adreq=Adrequest.query.get(adreq_id)
+    if request.method=="GET":
+        return render_template("ad_details.html",adreq=adreq)
     
 @app.route("/influencer/<inf_id>",methods=["GET"])
 def inf_details(inf_id):
@@ -608,14 +594,103 @@ def spon_negotiate(spon_id,adreq_id):
         db.session.commit()
         return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
-@app.route("/rate/<inf_id>",methods=["GET","POST"])
-def rate(inf_id):
+@app.route("/rate/<inf_id>/<spon_id>",methods=["GET","POST"])
+def rate(inf_id,spon_id):
+    global logged_spon
+    if not logged_spon:
+        return redirect(url_for("spon_login"))
     if request.method=="GET":
-        return render_template("rate.html")
-    #if request.method=="POST":
-        #inf=Influencer.query.get(inf_id)
+        return render_template("rate.html",i=Influencer.query.get(inf_id))
+    if request.method=="POST":
+        inf=Influencer.query.get(inf_id)
+        inf.inf_total_rating+=decimal.Decimal(request.form.get("rating"))
+        inf.inf_num_rating+=1
+        inf.rating=((inf.inf_total_rating)/inf.inf_num_rating)
+        db.session.commit()
+        return redirect(url_for("spon_dashboard",spon_id=spon_id))
 
+@app.route("/infsearch/<search_type>/<inf_id>", methods=["GET", "POST"])
+def infsearch(search_type,inf_id):
+    global logged_inf
+    if not logged_inf:
+        return redirect(url_for("inf_login"))
+    inf=Influencer.query.get(inf_id)
+    if request.method=="GET":
+        if search_type=="common":
+            return render_template("isearch_common.html",inf=inf)
+        if search_type=="niche":            
+            return render_template("isearch_niche.html",inf=inf)
+        if search_type=="camp_name":            
+            return render_template("isearch_camp.html",inf=inf)
+    if request.method=="POST":
+        if search_type=="niche":
+            niche=request.form.get("niche")
+            sresult=Campaign.query.filter(Campaign.niche.ilike(f"%{niche}%")).all()
+            print(sresult)
+            return render_template("iresult_camp.html",sresult=sresult,inf=inf)
+        if search_type=="camp_name":
+            camp_name=request.form.get("camp_name")
+            sresult=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
+            return render_template("iresult_camp.html",sresult=sresult,inf=inf)
 
+#search influencers(name,niche,reach),campaigns name
+@app.route("/sponsearch/<search_type>/<spon_id>", methods=["GET", "POST"])
+def sponsearch(search_type,spon_id):
+    global logged_spon
+    if not logged_spon:
+        return redirect(url_for("spon_login"))
+    spon=Sponsor.query.get(spon_id)
+    if request.method=="GET":
+        if search_type=="common":
+            return render_template("search_common.html",spon=spon)
+        if search_type=="inf_name":
+                return render_template("search_infname.html",spon=spon)
+        if search_type=="inf_niche":            
+            return render_template("search_infniche.html",spon=spon)
+        if search_type=="camp_name":            
+            return render_template("search_campname.html",spon=spon)
+    if request.method=="POST":
+        if search_type=="inf_name":
+            inf_name=request.form.get("inf_name")
+            sresult=Influencer.query.filter(Influencer.inf_name.ilike(f"%{inf_name}%")).all()
+            return render_template("sresult_infname.html",sresult=sresult,spon=spon)
+        if search_type=="inf_niche":
+            inf_niche=request.form.get("inf_niche")
+            sresult=Influencer.query.filter(Influencer.inf_niche.ilike(f"%{inf_niche}%")).all()
+            return render_template("sresult_infname.html",sresult=sresult,spon=spon)
+        if search_type=="camp_name":
+            camp_name=request.form.get("camp_name")
+            sresult=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
+            return render_template("sresult_campname.html",sresult=sresult,spon=spon)
+        
+@app.route("/find_details/<search_type>",methods=["GET","POST"])
+def adminsearch(search_type):
+    global logged_admin
+    if not logged_admin:
+        return redirect(url_for("admin_login"))
+    if request.method=="GET":
+        if search_type=="common":
+            return render_template("asearch_common.html")
+        if search_type=="spon_name":
+            return render_template("asearch_spon.html")
+        if search_type=="inf_name":            
+            return render_template("asearch_inf.html")
+        if search_type=="camp_name":            
+            return render_template("asearch_camp.html")
+    if request.method=="POST":
+        if search_type=="spon_name":
+            spon_name=request.form.get("spon_name")
+            result=Sponsor.query.filter(Sponsor.spon_name.ilike(f"%{spon_name}%")).all()
+            return render_template("aresult_spon.html",result=result)
+        if search_type=="inf_name":
+            inf_name=request.form.get("inf_name")
+            result=Influencer.query.filter(Influencer.inf_name.ilike(f"%{inf_name}%")).all()
+            return render_template("aresult_inf.html",result=result)
+        if search_type=="camp_name":
+            camp_name=request.form.get("camp_name")
+            result=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
+            return render_template("aresult_camp.html",result=result)
+        
 @app.route("/admin_summary",methods=["GET"])
 def admin_summary():
     global logged_admin
@@ -651,7 +726,11 @@ def admin_summary():
     return render_template("admin_summary.html",unsp=unsp,fsp=fsp,uninf=uninf,finf=finf,adacpt=adacpt,adrej=adrej,adpend=adpend,camps=camps,spons=spons,infs=infs,ads=ads)
 
 
-
+#inf_summary
+#spon_summary
+#budget full
+#rating
+#progress
     
 
 

@@ -18,65 +18,7 @@
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
 </style>
 <body>
-    <div class="container mt-5">
-        <h2>Flagged Campaigns</h2>
-        <div class="row">
-            {%for i in camp%}
-                {% if i.flagged == 1 %}
-                <div class="col-md-6 campaign-card">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5>Campaign id:{{i.camp_id}}</h5>
-                            <h5>Campaign Name:{{i.camp_name}}</h5>
-                            <a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View</a>
-                            <a href="{{url_for('del_camp', camp_id=i.camp_id) }}" class="btn btn-danger" type="button">Remove</a>
-                        </div>            
-                    </div>
-                </div>
-                {% endif %}
-            {%endfor%}       
-        
-        
-            <h2>Flagged Influencers</h2>
-            <div class="row">
-                {%for i in inf%}
-                    {% if i.flagged == 1 %}
-                    <div class="col-md-6 influencer-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Influencer id:{{i.inf_id}}</h5>
-                                <h5>Influencer Name:{{i.inf_name}}</h5>
-                                <a href="{{url_for('inf_details', inf_id=i.inf_id) }}" class="btn btn-primary" type="button">View</a>
-                                <a href="{{url_for('del_inf', inf_id=i.inf_id) }}" class="btn btn-danger" type="button">Remove</a>
-                            </div>            
-                        </div>
-                    </div>
-                    {% endif %}
-                {%endfor%}       
-            </div>
-
-            <h2>Flagged Sponsors</h2>
-                <div class="row">
-                {%for i in spon%}
-                    {% if i.flagged == 1 %}
-                    <div class="col-md-6 sponsor-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Sponsor id:{{i.spon_id}}</h5>
-                                <h5>Sponsor Name:{{i.spon_name}}</h5>
-                                <a href="{{url_for('spon_details', spon_id=i.spon_id) }}" class="btn btn-primary" type="button">View</a>
-                                <a href="{{url_for('del_spon', spon_id=i.spon_id) }}" class="btn btn-danger" type="button">Remove</a>
-                            </div>            
-                        </div>
-                    </div>
-            {% endif %}
-        {%endfor%}    
-
-       
-    </div>
-        
-        
-    <nav class="navbar bg-body-tertiary fixed-top">
+   <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">ADMIN DASHBOARD</a>
             <a href="/ongoing_camp"><button class="btn btn-primary">ONGOING CAMPAIGNS</button></a>
@@ -119,15 +61,29 @@
             </div>
         </div>
     </nav>
-   
-    <!-- 
+    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+        <h1>Search Campaign results</h1>
+        <div class="card" style="width: 18rem;">
+            {%for i in result%}
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
 
-    <div style="margin-top: 5%;">
-        {%for i in camp%}
-        <section style="background-color:brown;"><h1>{{i.camp_name}}</h1></section>
-        {%endfor%}
-    </div>   
-    -->
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                        <p class="card-text"></p>{{i.niche}}</p>
+                        <p class="card-text"></p>{{i.description}}</p>
+                        <p class="card-text"></p>{{i.budget}}</p>
+                        {% for ad in i.camp_ads %}
+                            <a href="{{url_for('ad_details',adreq_id=ad.adreq_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+                        {%endfor%}
+                        
+                        <a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+                    </div>
+                </div>
+            {%endfor%}
+        </div>
+
 
 </body>
 </html>

@@ -17,28 +17,42 @@
         .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
         .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
     </style>
-
-    <h1>Welcome {{inf.inf_name}}</h1>
-    <h2>PROFILE</h2>
-    <h2>Rating:{{inf.rating}}</h2>
-    <h2>Reach:{{inf.inf_reach}}</h2>
-    <h2>Niche:{{inf.inf_niche}}</h2>
-    <h2>Category:{{inf.inf_category}}</h2>
-    <a href="{{url_for('update_inf',inf_id=inf.inf_id) }}"><button class="btn btn-info">Update profile</button></a>
-
-    <a href="{{url_for('earnings',inf_id=inf.inf_id) }}"><button class="btn btn-primary">Earnings {{earned}}</button></a>
    
-
-
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
-            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
+            <a href="{{url_for('infsearch',search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
             <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
             <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
             <li class="nav-item"><a href="/"><button class="btn btn-primary">STATS</button></a></li>
             <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
         </div>
     </nav>
+    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+        <h1>Search Campaign results</h1>
+        <div class="card" style="width: 18rem;">
+            {%for i in sresult%}
+                {%if i.visibility=='public'%}
+                <div class="card" style="width: 18rem;">
+                <div class="card-body">
+
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                        <p class="card-text"></p>{{i.niche}}</p>
+                        <p class="card-text"></p>{{i.description}}</p>
+                        <p class="card-text"></p>{{i.budget}}</p>
+                        {% for ad in i.camp_ads %}
+                            <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+                        {%endfor%}
+                        
+                        <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+                </div>
+                </div>
+                {%endif%}
+
+            {%endfor%}
+        </div>
+
 </body>
 </html>

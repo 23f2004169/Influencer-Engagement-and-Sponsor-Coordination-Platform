@@ -17,28 +17,24 @@
         .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
         .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
     </style>
-
-    <h1>Welcome {{inf.inf_name}}</h1>
-    <h2>PROFILE</h2>
-    <h2>Rating:{{inf.rating}}</h2>
-    <h2>Reach:{{inf.inf_reach}}</h2>
-    <h2>Niche:{{inf.inf_niche}}</h2>
-    <h2>Category:{{inf.inf_category}}</h2>
-    <a href="{{url_for('update_inf',inf_id=inf.inf_id) }}"><button class="btn btn-info">Update profile</button></a>
-
-    <a href="{{url_for('earnings',inf_id=inf.inf_id) }}"><button class="btn btn-primary">Earnings {{earned}}</button></a>
    
-
-
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
-            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
+            <a href="{{url_for('infsearch',search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
             <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
             <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
             <li class="nav-item"><a href="/"><button class="btn btn-primary">STATS</button></a></li>
             <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
         </div>
     </nav>
+    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+        <div class="card p-5" style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+            <h1 class="card-title">Search based on:</h1>
+            <a href="{{url_for('infsearch', search_type='niche',inf_id=inf.inf_id)}}"><button class="m-3 btn btn-primary">Campaign niche</button></a>
+            <a href="{{url_for('infsearch', search_type='camp_name',inf_id=inf.inf_id)}}"><button class="m-3 btn btn-primary">Campaign name</button></a>
+
+        </div>
+    </div>
 </body>
 </html>

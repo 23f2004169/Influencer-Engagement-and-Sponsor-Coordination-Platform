@@ -24,7 +24,7 @@
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">SPONSOR DASHBOARD</a>
-            <a href="{{url_for('sponsearch', search_type='common',spon_id=spon.spon_id)}}"><button class="btn btn-outline-success" type="button">Search for Influencers,Campaigns</button></a>
+            <a href="/search_common"><button class="btn btn-outline-success" type="button">Search for Influencers,Campaigns</button></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -36,7 +36,7 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{{url_for('spon_dashboard',spon_id=spon.spon_id) }}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">CAMPAIGN MANAGEMENT</a>
@@ -65,23 +65,29 @@
             </div>
         </div>
     </nav>
-    <h2>Ongoing Campaigns sponsored by you</h2>
+    
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-    <div class="card" style="width: 18rem;">
-        {% for i in camps%}
+        <h1>Search Campaign results</h1>
+        <div class="card" style="width: 18rem;">
+            {%for i in sresult%}
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
-                    <p class="card-text"></p>{{i.description}}</p>
-                       {% for ad in i.camp_ads %}
-                        <a href="{{url_for('spon_ad_details',adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                        <p class="card-text"></p>{{i.description}}</p>
+                        <p class="card-text"></p>{{i.budget}}</p>
+                        {% for ad in i.camp_ads %}
+                            <a href="{{url_for('spon_ad_details',adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
                         {%endfor%}
-                    
-                    <a href="{{url_for('spon_camp_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+                        
+                        <a href="{{url_for('spon_camp_details', camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+                    </div>
                 </div>
-            </div>
-        {%endfor%}
-    </div>
+            {%endfor%}
+        </div>
+
 
 </body>
 </html>
