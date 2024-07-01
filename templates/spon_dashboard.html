@@ -9,18 +9,28 @@
 </head>
 <body>
     <style>
-        body {
-            padding-top: 70px;
-            background-color: #eaea96;}
+        body {padding-top: 70px;background-color: #eaea96;}
         h1, h2 {margin-top: 20px;}
         table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
         .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
         .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+        .right {float: right;margin: 10px; }
+        .resized-image {width: 600px;height:400px;  }
+        .top {clear: both; float: right; margin: 10px;}
+        .small-image {width: 200px; height: auto; }
+        .card-container {display: flex;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line */
+            justify-content: space-between; /* Distribute space between cards */}
+        .card {width: 18rem;
+            margin-bottom: 20px; /* Adjust spacing between rows */
+            margin-right: 20px; /* Adjust spacing between columns */}
+        .card-body {
+            text-align: center; /* Center align content */}
+        .small-image { width: 100%; /* Make sure image fills its container */
+            height: auto;}
     </style>
-
+    <img id="image" src="/static/{{spon.spon_id}}.jpg" alt="" class="top ">
     <h1>Welcome {{spon.spon_name}}</h1>
-    
-
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">SPONSOR DASHBOARD</a>
@@ -65,23 +75,25 @@
             </div>
         </div>
     </nav>
+
     <h2>Ongoing Campaigns sponsored by you</h2>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-    <div class="card" style="width: 18rem;">
-        {% for i in camps%}
-            <div class="card" style="width: 18rem;">
+        <div class="card-container">
+            {% for i in camps %}
+            <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
-                    <p class="card-text"></p>{{i.description}}</p>
-                       {% for ad in i.camp_ads %}
-                        <a href="{{url_for('spon_ad_details',adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
-                        {%endfor%}
-                    
-                    <a href="{{url_for('spon_camp_details',camp_id=i.camp_id,spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+                    <h5 class="card-title">{{ i.camp_id }}: {{ i.camp_name }}</h5>
+                    <img id="image" src="/static/{{ i.camp_id }}.jpg" alt="" class="small-image">
+                    <p class="card-text">{{ i.description }}</p>
+                    {% for ad in i.camp_ads %}
+                    <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id, spon_id=spon.spon_id) }}" class="btn btn-info" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                    {% endfor %}
+                    <a href="{{ url_for('spon_camp_details', camp_id=i.camp_id, spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                 </div>
             </div>
-        {%endfor%}
+            {% endfor %}
+        </div>
     </div>
-
+    
 </body>
 </html>
