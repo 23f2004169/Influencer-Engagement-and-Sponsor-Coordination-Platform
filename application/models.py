@@ -36,6 +36,7 @@ class Sponsor(db.Model):
 class Adrequest(db.Model):
     __tablename__="adrequest"
     adreq_id=db.Column(db.Integer,primary_key=True,nullable=False)
+    adreq_name=db.Column(db.String,nullable=False)
     inf_id=db.Column(db.Integer,db.ForeignKey("influencer.inf_id"),nullable=False)
     camp_id=db.Column(db.Integer,db.ForeignKey("campaign.camp_id"),nullable=False)
     messages=db.Column(db.String)

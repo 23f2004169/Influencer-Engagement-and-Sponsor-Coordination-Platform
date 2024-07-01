@@ -75,7 +75,7 @@
                         <p class="card-text"></p>{{i.description}}</p>
                         <p class="card-text"></p>{{i.budget}}</p>
                         {% for ad in i.camp_ads %}
-                            <a href="{{url_for('ad_details',adreq_id=ad.adreq_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+                            <a href="{{url_for('ad_details',adreq_id=ad.adreq_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.adreq_name}}</a>
                         {%endfor%}
                         
                         <a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View campaign details</a>

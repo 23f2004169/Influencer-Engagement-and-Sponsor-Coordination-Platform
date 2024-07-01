@@ -61,6 +61,8 @@
     <h2>All Ad-requests</h2>
     <table id="all-Adrequests">
         <tr>
+            <th>Adrequest id</th>
+            <th>Adrequest name</th>
             <th>Campaign id</th>
             <th>Influencer id</th>
             <th>Messages:</th>
@@ -72,6 +74,7 @@
         {%for i in adreq%} 
             <tr>
                 <td>{{i.adreq_id}}</td>
+                <td>{{i.adreq_name}}</td>
                 <td>{{i.camp_id}}</td>
                 <td>{{i.inf_id}}</td>
                 <td>{{i.messages}}</td>

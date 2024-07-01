@@ -71,10 +71,12 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{i.inf_name}}</h5>
+                <h5 class="card-subtitle mb-2 text-body-secondary">Id:{{i.inf_id}}</h5>
                 <h6 class="card-subtitle mb-2 text-body-secondary">{{i.inf_niche}}</h6>
                 <h6 class="card-subtitle mb-2 text-body-secondary">{{i.inf_reach}}</h6>
                 <h6 class="card-subtitle mb-2 text-body-secondary">{{i.rating}}</h6>
                 <a href="{{url_for('rate',spon_id=spon.spon_id,inf_id=i.inf_id) }}"><button id='rate' class="btn btn-outline-primary" type="button">Rate</button></a>
+                <a href="{{url_for('create_ad',spon_id=spon.spon_id) }}"><button id='rate' class="btn btn-outline-primary" type="button">Send Ad request</button></a>
             </div>
         </div>
       {% endfor %}

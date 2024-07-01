@@ -491,6 +491,7 @@ def create_ad(spon_id):
         spon=Sponsor.query.get(spon_id)
         return render_template("create_ad.html",spon=spon)
     if request.method=="POST":
+        adreq_name=request.form.get("adreq_name")
         camp_id=request.form.get("camp_id")
         pay_amount=request.form.get("pay_amount")
         status=request.form.get("status")
@@ -498,7 +499,7 @@ def create_ad(spon_id):
         requirements=request.form.get("requirements")
         messages=request.form.get("messages")
         spon_id=spon_id
-        new_ad=Adrequest(camp_id=camp_id,pay_amount=pay_amount,status=status,inf_id=inf_id,requirements=requirements,messages=messages)
+        new_ad=Adrequest(adreq_name=adreq_name,camp_id=camp_id,pay_amount=pay_amount,status=status,inf_id=inf_id,requirements=requirements,messages=messages)
         db.session.add(new_ad)
         db.session.commit()
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
@@ -531,6 +532,7 @@ def update_ad(spon_id):
         ads=Adrequest.query.all()
         return render_template("update_ad.html",ads=ads,spon=spon)
     if request.method=="POST":
+        adreq_name=request.form.get("adreq_name")
         camp_id=request.form.get("camp_id")
         pay_amount=request.form.get("pay_amount")
         status=request.form.get("status")
@@ -539,6 +541,7 @@ def update_ad(spon_id):
         messages=request.form.get("messages")
         ad_id=request.form.get("adreq_id")
         update_ad=Adrequest.query.get(ad_id)
+        update_ad.adreq_name=adreq_name
         update_ad.camp_id=camp_id     
         update_ad.pay_amount=pay_amount
         update_ad.status=status
