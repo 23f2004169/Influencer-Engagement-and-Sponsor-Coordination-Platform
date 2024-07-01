@@ -82,7 +82,6 @@ def ongoing_camp():
         start_date=datetime.strptime(x.start_date,'%d-%m-%Y').date()
         end_date=datetime.strptime(x.end_date,'%d-%m-%Y').date()
         current_date=datetime.now().date()
-        print(start_date,end_date,current_date)
         if start_date<=current_date and  end_date>=current_date:
             camplist.append(x)
     return render_template('ongoing_camp.html',camp=camplist)
@@ -236,7 +235,6 @@ def active_camp(inf_id):
         print(start_date,end_date,current_date)
         if start_date<=current_date and  end_date>=current_date and x.visibility=="public":
             camplist.append(x)
-        print(camplist)
     return render_template('active_camp.html',camp=camplist,inf=inf)
 
 @app.route("/campaign/<int:camp_id>/<inf_id>/inf",methods=["GET"])
@@ -310,12 +308,12 @@ def negotiate(inf_id,adreq_id):
         inf_msg=request.form.get("messages")
         if inf_id==infid:
             ad.messages+="//Influencer-"+infid +':'+ inf_msg+"//"
-        print(inf_msg)
         db.session.commit()
         for x in inf.inf_req:
             if x.status=="pending":
                 newlist.append(x)
         return render_template("new_adreq.html",inf=inf,adreq=newlist)
+    
 @app.route("/update_inf/<inf_id>",methods=["GET", "POST"])
 def update_inf(inf_id):
     global logged_inf
@@ -340,7 +338,6 @@ def update_inf(inf_id):
         update_inf.rating=rating
         db.session.commit()
         return redirect(url_for("inf_dashboard",inf_id=inf_id))
-
 
 @app.route('/spon_reg', methods=['GET','POST'])
 def spon_reg():
@@ -403,15 +400,11 @@ def spon_dashboard(spon_id):
         start_date=datetime.strptime(x.start_date,'%d-%m-%Y').date()
         end_date=datetime.strptime(x.end_date,'%d-%m-%Y').date()
         current_date=datetime.now().date()
-        print(start_date,end_date,current_date)
         if start_date<=current_date and  end_date>=current_date :
             ongoingcamps.append(x)
-    print(ongoingcamps)
     if request.method=="GET":
         return render_template("spon_dashboard.html",spon=spon,camps=ongoingcamps,adreq=adreq)
     return render_template("spon_dashboard.html",spon=spon,camps=ongoingcamps,adreq=adreq)
-
-
 
 @app.route("/create_camp/<spon_id>",methods=["GET", "POST"])
 def create_camp(spon_id):
@@ -629,7 +622,6 @@ def infsearch(search_type,inf_id):
         if search_type=="niche":
             niche=request.form.get("niche")
             sresult=Campaign.query.filter(Campaign.niche.ilike(f"%{niche}%")).all()
-            print(sresult)
             return render_template("iresult_camp.html",sresult=sresult,inf=inf)
         if search_type=="camp_name":
             camp_name=request.form.get("camp_name")

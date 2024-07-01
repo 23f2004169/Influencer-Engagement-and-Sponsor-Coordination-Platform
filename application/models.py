@@ -14,7 +14,7 @@ class Influencer(db.Model):
     inf_niche=db.Column(db.String,nullable=False)
     inf_reach=db.Column(db.Integer,nullable=False) 
     flagged=db.Column(db.Integer, default=0)
-    rating=db.Column(db.Numeric,default=0)
+    rating=db.Column(db.Numeric(1,1),default=0)
     inf_req=db.relationship('Adrequest')
     inf_num_rating=db.Column(db.Integer, default=0)
     inf_total_rating=db.Column(db.Numeric, default=0)
