@@ -4,6 +4,7 @@ from application.models import *
 from datetime import datetime,date
 #import simplejson as json
 import decimal
+import matplotlib.pyplot as plt
 
 logged_admin=None
 logged_inf=None
@@ -626,7 +627,6 @@ def infsearch(search_type,inf_id):
             sresult=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
             return render_template("iresult_camp.html",sresult=sresult,inf=inf)
 
-#search influencers(name,niche,reach),campaigns name
 @app.route("/sponsearch/<search_type>/<spon_id>", methods=["GET", "POST"])
 def sponsearch(search_type,spon_id):
     global logged_spon
@@ -724,16 +724,104 @@ def admin_summary():
             pub+=1   
     return render_template("admin_summary.html",pub=pub,priv=priv,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,unsp=unsp,fsp=fsp,uninf=uninf,finf=finf,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
 
+@app.route("/inf_summary/<inf_id>",methods=["GET"])
+def inf_summary(inf_id):
+    global logged_inf
+    if not logged_inf:
+        return redirect(url_for('inf_login'))
+    camps=Campaign.query.all()
+    ads=Adrequest.query.all()
+    spons=Sponsor.query.all()
+    infs=Influencer.query.all()
+    inf=Influencer.query.get(inf_id)
+    ads_json=[adrequest.to_json() for adrequest in ads]
+    spons_json=[sponsor.to_json()for sponsor in spons]
+    infs_json=[influencer.to_json()for influencer in infs]
+    camps_json=[campaign.to_json() for campaign in camps]
+    adacpt,adrej,adpend=0,0,0
+    for i in inf.inf_req:
+        if i.status=="accepted":
+            adacpt+=1
+        if i.status=="rejected":
+            adrej+=1
+        if i.status=="pending":
+            adpend+=1
+    return render_template("inf_summary.html",inf=inf,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
+    
+    
+@app.route("/spon_summary/<spon_id>",methods=["GET"])
+def spon_summary(spon_id):
+    global logged_spon
+    if not logged_spon:
+        return redirect(url_for('spon_login'))
+    camps=Campaign.query.all()
+    ads=Adrequest.query.all()
+    spons=Sponsor.query.all()
+    infs=Influencer.query.all()
+    spon=Sponsor.query.get(spon_id)
+    ads_json=[adrequest.to_json() for adrequest in ads]
+    spons_json=[sponsor.to_json()for sponsor in spons]
+    infs_json=[influencer.to_json()for influencer in infs]
+    camps_json=[campaign.to_json() for campaign in camps]
+    adacpt,adrej,adpend,pub,priv=0,0,0,0,0
+    for camp in spon.spon_camp:
+        for i in camp.camp_ads:
+            if i.status=="accepted":
+                adacpt+=1
+            if i.status=="rejected":
+                adrej+=1
+            if i.status=="pending":
+                adpend+=1
+    for camp in spon.spon_camp:
+        if camp.visibility=="private":
+            priv+=1
+        elif camp.visibility=="public":
+            pub+=1
+    cname,cprog=[],[]
+    for camp in spon.spon_camp:
+        cname.append(camp.camp_name)
+        cprog.append(camp.progress)
+    print(cname,cprog)
+    
+    x_labels = cname
+    y_values = cprog
+
+    plt.bar(x_labels, y_values, color='green', width=0.5)
+    plt.title('Campaign Progress')
+    plt.xlabel('Campaigns')
+    plt.ylabel('Progress')
+    plt.xticks(rotation=45, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout() 
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.savefig('static/campaign_progress.png')
+    plt.close()
+    return render_template("spon_summary.html",cprog=cprog,cname=cname,spon=spon,priv=priv,pub=pub,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
+
+@app.route('/campaign/<camp_id>/<spon_id>/rembudget',methods=["GET"])
+def rembudget(camp_id,spon_id):
+    rem=0
+    spon=Sponsor.query.get(spon_id)
+    camp=Campaign.query.get(camp_id)
+    rem=camp.budget
+    print(rem)
+    for ad in camp.camp_ads:
+        rem-=ad.pay_amount
+    print(rem)
+    if request.method=="GET":
+        return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
+    return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
+
+    
 
 #inf_summary
-#spon_summary
-#budget full
-#api
+
 
 '''progress% 
-   search bar 
+   3 search bar 
    dummydata
-   negotiation table '''  
+   negotiation table 
+   links link'''  
 
 
     

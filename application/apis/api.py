@@ -102,4 +102,26 @@ def api_create_ad():
     new_ad=Adrequest(adreq_name=adreq_name,camp_id=camp_id,pay_amount=pay_amount,status=status,inf_id=inf_id,requirements=requirements,messages=messages)
     db.session.add(new_ad)
     db.session.commit()
-    return {"message":"ad updation successfull"},201
+    return {"message":"ad creation successfull"},201
+
+
+
+'''{ "camp_name":"",
+    "start_date":"",
+    "end_date":"",
+    "budget":,
+    "visibility":"",
+    "goals":"",
+    "description":"",
+    "camp_id": }'''
+
+'''{
+    "adreq_name":"",
+    "camp_id": ,
+    "pay_amount":,
+    "status":"",
+    "inf_id":,
+    "requirements":"",
+    "messages":"",
+    "adreq_id":
+}'''

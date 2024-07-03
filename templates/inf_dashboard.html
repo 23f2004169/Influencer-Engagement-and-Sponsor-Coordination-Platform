@@ -26,7 +26,6 @@
     <h2>Niche:{{inf.inf_niche}}</h2>
     <h2>Category:{{inf.inf_category}}</h2>
     <a href="{{url_for('update_inf',inf_id=inf.inf_id) }}"><button class="btn btn-info">Update profile</button></a>
-
     <a href="{{url_for('earnings',inf_id=inf.inf_id) }}"><button class="btn btn-primary">Earnings {{earned}}</button></a>
    
 
@@ -37,7 +36,7 @@
             <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
             <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
             <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
-            <li class="nav-item"><a href="/"><button class="btn btn-primary">STATS</button></a></li>
+            <li class="nav-item"><a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-primary">STATS</button></a></li>
             <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
         </div>
     </nav>
