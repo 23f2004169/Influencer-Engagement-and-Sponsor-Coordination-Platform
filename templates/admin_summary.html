@@ -60,48 +60,50 @@
         </div>
     </div>
 </nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <div style="margin-top:5%; margin-left:5%; margin-right:5%;">
     <h1>SUMMARY</h1>
-    {%for ad in ads%}
-    <canvas id="{{ad.adreq_id}}" style="width:100%;max-width:700px"></canvas>
-    {%endfor%}
 </div>
+<canvas id="myChart1" style="width:100%;max-width:700px"></canvas>
 <script>
-    console.log('${ads_json}')
-    //list of ads
-    ads_json.forEach(ad=>{
-        var xValues=ad.adreq_id;
-        var adcount=[]
-
-
-    new Chart(ad.adreq_id, {
-            type: "bar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    data: adcount
-                }]
-            },
-        });
-        
+       const us = {{ unsp }};
+       const fs = {{ fsp }};
+       const ui = {{uninf}};
+       const fi={{finf}}
+       const xVals=["unflagged sponsors","flagged sponsors","unflagged influencers","flagged influencers"];
+       const yVals=[us,fs,ui,fs];
+       const barColors1 = ["#1e7145","#b91d47","#3e95cd","#8e5ea2"];
+       new Chart("myChart1", {
+      type: "pie",
+      data: {
+        labels: xVals,
+        datasets: [{
+          backgroundColor: barColors1,
+          data: yVals
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: "Flagged/unflagged Users"
+        }
+      },
+      scales: {y: {beginAtZero: true // barchart y-axis starts at zero
+                }
+      }
     });
-</script>
-   
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</script> 
 
-<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+<canvas id="myChart2" style="width:100%;max-width:600px"></canvas>
 <script>
+// Data passed from Flask
+const acpt = {{ adacpt }};
+const rej = {{ adrej }};
+const pend = {{adpend}};
 const xValues = ["Accepted", "Rejected", "Pending"];
-const yValues = [55,34, 58];
-//const yValues = [adacpt, adrej, adpend];
-
-const barColors = [
-  "#1e7145",
-  "#b91d47",
-  "#e8c3b9"
-];
-
-new Chart("myChart", {
+const yValues = [acpt, rej, pend];
+const barColors = ["#1e7145","#b91d47", "#e8c3b9"];
+new Chart("myChart2", {
   type: "pie",
   data: {
     labels: xValues,
@@ -118,5 +120,31 @@ new Chart("myChart", {
   }
 });
 </script>
+
+<canvas id="myChart3" style="width:100%;max-width:600px"></canvas>
+<script>
+const private = {{ priv }};
+const public= {{ pub }};
+const xValues3 = ["Private","Public"];
+const yValues3 = [private,public];
+const barColors3 = ["#1e7145","#b91d47"];
+new Chart("myChart3", {
+  type: "pie",
+  data: {
+    labels: xValues3,
+    datasets: [{
+      backgroundColor: barColors3,
+      data: yValues3
+    }]
+  },
+  options: {
+    title: {
+      display: true,
+      text: "Campaign visibility"
+    }
+  }
+});
+</script>
+   
 </body>
 </html>

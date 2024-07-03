@@ -17,6 +17,7 @@ db.init_app(app=app)
 app.app_context().push()
 
 from application.controllers import *
+from application.apis.api import *
 
 
 if __name__=='__main__':

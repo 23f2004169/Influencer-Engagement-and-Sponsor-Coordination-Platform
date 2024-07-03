@@ -443,7 +443,6 @@ def delete_camp(spon_id):
         if del_camp:
             db.session.delete(del_camp)
             db.session.commit()
-        print(del_camp)
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
 
 @app.route("/update_camp/<spon_id>",methods=["GET", "POST"])
@@ -512,7 +511,6 @@ def delete_ad(spon_id):
         if del_ad:
             db.session.delete(del_ad)
             db.session.commit()
-        print(del_ad)
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
     
 @app.route("/update_ad/<spon_id>",methods=["GET", "POST"])
@@ -695,9 +693,11 @@ def admin_summary():
     ads=Adrequest.query.all()
     spons=Sponsor.query.all()
     infs=Influencer.query.all()
-    adacpt=0
-    adrej=0
-    adpend=0
+    ads_json=[adrequest.to_json() for adrequest in ads]
+    spons_json=[sponsor.to_json()for sponsor in spons]
+    infs_json=[influencer.to_json()for influencer in infs]
+    camps_json=[campaign.to_json() for campaign in camps]
+    adacpt,adrej,adpend=0,0,0
     for i in ads:
         if i.status=="accepted":
             adacpt+=1
@@ -705,7 +705,6 @@ def admin_summary():
             adrej+=1
         if i.status=="pending":
             adpend+=1
-    print(adacpt,adrej,adpend)  
     unsp,fsp,uninf,finf=0,0,0,0
     for i in spons:
         if i.flagged==0:
@@ -717,16 +716,24 @@ def admin_summary():
             uninf+=1
         else:
             finf+=1
-        
-    return render_template("admin_summary.html",unsp=unsp,fsp=fsp,uninf=uninf,finf=finf,adacpt=adacpt,adrej=adrej,adpend=adpend,camps=camps,spons=spons,infs=infs,ads=ads)
+    priv,pub=0,0
+    for i in camps:
+        if i.visibility=="private":
+            priv+=1
+        elif i.visibility=="public":
+            pub+=1   
+    return render_template("admin_summary.html",pub=pub,priv=priv,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,unsp=unsp,fsp=fsp,uninf=uninf,finf=finf,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
 
 
 #inf_summary
 #spon_summary
 #budget full
-#rating
-#progress
-    
+#api
+
+'''progress% 
+   search bar 
+   dummydata
+   negotiation table '''  
 
 
     
