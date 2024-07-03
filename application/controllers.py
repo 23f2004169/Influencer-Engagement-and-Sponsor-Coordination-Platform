@@ -162,6 +162,8 @@ def del_inf(inf_id):
     db.session.commit()
     return redirect("/admin_dashboard")
 
+
+
 @app.route('/inf_reg', methods=['GET','POST'])
 def inf_reg():
     if request.method=="GET":
@@ -339,6 +341,8 @@ def update_inf(inf_id):
         update_inf.rating=rating
         db.session.commit()
         return redirect(url_for("inf_dashboard",inf_id=inf_id))
+
+
 
 @app.route('/spon_reg', methods=['GET','POST'])
 def spon_reg():
@@ -604,6 +608,22 @@ def rate(inf_id,spon_id):
         db.session.commit()
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
 
+@app.route('/campaign/<camp_id>/<spon_id>/rembudget',methods=["GET"])
+def rembudget(camp_id,spon_id):
+    rem=0
+    spon=Sponsor.query.get(spon_id)
+    camp=Campaign.query.get(camp_id)
+    rem=camp.budget
+    print(rem)
+    for ad in camp.camp_ads:
+        rem-=ad.pay_amount
+    print(rem)
+    if request.method=="GET":
+        return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
+    return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
+
+
+
 @app.route("/infsearch/<search_type>/<inf_id>", methods=["GET", "POST"])
 def infsearch(search_type,inf_id):
     global logged_inf
@@ -683,7 +703,9 @@ def adminsearch(search_type):
             camp_name=request.form.get("camp_name")
             result=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
             return render_template("aresult_camp.html",result=result)
-        
+
+
+
 @app.route("/admin_summary",methods=["GET"])
 def admin_summary():
     global logged_admin
@@ -746,6 +768,7 @@ def inf_summary(inf_id):
             adrej+=1
         if i.status=="pending":
             adpend+=1
+
     return render_template("inf_summary.html",inf=inf,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
     
     
@@ -798,24 +821,9 @@ def spon_summary(spon_id):
     plt.close()
     return render_template("spon_summary.html",cprog=cprog,cname=cname,spon=spon,priv=priv,pub=pub,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
 
-@app.route('/campaign/<camp_id>/<spon_id>/rembudget',methods=["GET"])
-def rembudget(camp_id,spon_id):
-    rem=0
-    spon=Sponsor.query.get(spon_id)
-    camp=Campaign.query.get(camp_id)
-    rem=camp.budget
-    print(rem)
-    for ad in camp.camp_ads:
-        rem-=ad.pay_amount
-    print(rem)
-    if request.method=="GET":
-        return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
-    return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
 
-    
 
 #inf_summary
-
 
 '''progress% 
    3 search bar 
