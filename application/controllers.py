@@ -768,9 +768,42 @@ def inf_summary(inf_id):
             adrej+=1
         if i.status=="pending":
             adpend+=1
-
+    camps=[]
+    for i in inf.inf_req:
+        camps.append(i.camp_id)
+    uniquecamps=set(camps)
+    lcamp=list(uniquecamps)
+    #print(lcamp)
+    out=[]
+    cname,cprog=[],[]
+    for i in lcamp:
+        c=Campaign.query.get(i)
+        cname.append(c.camp_name)
+        cprog.append(c.progress)
+        out.append(c)
+    print(out)
+    print(cname,cprog)
+    x_labels = cname
+    y_values = cprog
+    plt.bar(x_labels, y_values, color='green', width=0.5)
+    plt.title('Campaign Progress')
+    plt.xlabel('Campaigns')
+    plt.ylabel('Progress')
+    plt.xticks(rotation=45, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout() 
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.savefig('static/i_campaign_progress.png')
+    plt.close()
     return render_template("inf_summary.html",inf=inf,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
-    
+
+'''cname,cprog=[],[]
+    for ad in inf.inf_req:
+        for i in out:
+            if ad.camp_id==i.camp_id:
+                cname.append(i.camp_name)
+                cprog.append(i.progress)
+    print(cname,cprog)  ''' 
     
 @app.route("/spon_summary/<spon_id>",methods=["GET"])
 def spon_summary(spon_id):
@@ -817,13 +850,14 @@ def spon_summary(spon_id):
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout() 
     plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.savefig('static/campaign_progress.png')
+    plt.savefig('static/s_campaign_progress.png')
     plt.close()
     return render_template("spon_summary.html",cprog=cprog,cname=cname,spon=spon,priv=priv,pub=pub,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
 
 
 
-#inf_summary
+#Ability to negotiate the “payment_amount” for a particular ad
+
 
 '''progress% 
    3 search bar 
