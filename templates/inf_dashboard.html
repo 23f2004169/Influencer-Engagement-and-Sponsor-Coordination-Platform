@@ -8,37 +8,63 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"crossorigin="anonymous"></script>
 </head>
 <body>
+    
+    <nav class="navbar bg-body-tertiary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand">INFLUENCER DASHBOARD</a>
+            <a href="{{url_for('inf_dashboard',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">Profile</button></a>
+            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-secondary" type="button">Search for Campaigns</button></a>
+            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">ACTIVE PUBLIC CAMPAIGNS</button></a>
+            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-secondary">New Ad requests </button></a>
+            <a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">STATS</button></a>
+            <a href="/inf_login"><button class="btn btn-danger">Logout</button></a>
+    </nav>
     <style>
         body {
             padding-top: 70px;
-            background-color: #eaea96;}
+            background-color:rgb(34, 23, 59);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
         h1, h2 {margin-top: 20px;}
-        table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
+        table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #9193ce;}
         .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
         .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+
+        .profile-container {
+            width: 80%;
+            max-width: 600px; /* Adjust as needed */
+            padding: 20px;
+            background-color:rgb(236, 219, 192);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for depth */
+            text-align: center;
+        }
+
+        .profile-container img {
+            max-width: 100%;
+            border-radius: 50%; /* Rounded profile picture */
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            margin-top: 10px;
+        }
     </style>
-
-    <h1>Welcome {{inf.inf_name}}</h1>
-    <h2>PROFILE</h2>
-    <img id="image" src="/static/{{inf.inf_id}}.jpg" alt="profile picture">
-    <h2>Rating:{{inf.rating}}</h2>
-    <h2>Reach:{{inf.inf_reach}}</h2>
-    <h2>Niche:{{inf.inf_niche}}</h2>
-    <h2>Category:{{inf.inf_category}}</h2>
-    <a href="{{url_for('update_inf',inf_id=inf.inf_id) }}"><button class="btn btn-info">Update profile</button></a>
-    <a href="{{url_for('earnings',inf_id=inf.inf_id) }}"><button class="btn btn-primary">Earnings {{earned}}</button></a>
-   
-
-
-    <nav class="navbar bg-body-tertiary fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
-            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
-            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
-            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
-            <li class="nav-item"><a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-primary">STATS</button></a></li>
-            <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
-        </div>
-    </nav>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Welcome {{ inf.inf_name }}</h1>
+        <h2>PROFILE</h2>
+        <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="profile picture">
+        <h2>Rating: {{ inf.rating }}</h2>
+        <h2>Reach: {{ inf.inf_reach }}</h2>
+        <h2>Niche: {{ inf.inf_niche }}</h2>
+        <h2>Category: {{ inf.inf_category }}</h2>
+        <a href="{{ url_for('update_inf', inf_id=inf.inf_id) }}" class="btn btn-secondary">Update profile</a>
+        <a href="{{ url_for('earnings', inf_id=inf.inf_id) }}" class="btn btn-secondary">Earnings {{ earned }}</a>
+    </div>
 </body>
 </html>

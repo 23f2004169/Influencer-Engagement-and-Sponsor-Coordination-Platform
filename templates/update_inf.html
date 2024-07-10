@@ -8,19 +8,56 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"crossorigin="anonymous"></script>
 </head>
 <body>
+    <nav class="navbar bg-body-tertiary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
+            <a href="{{url_for('inf_dashboard',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">Profile</button></a>
+            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-secondary" type="button">Search for Campaigns</button></a>
+            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">ACTIVE PUBLIC CAMPAIGNS</button></a>
+            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-secondary">New Ad requests </button></a>
+            <li class="nav-item"><a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">STATS</button></a></li>
+            <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
+        </div>
+    </nav>
+    <style>
+        body {
+        padding-top: 70px;
+        background-color:rgb(34, 23, 59);}
+        h1, h2 {margin-top: 20px;}
+        table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
+    .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
+    .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+        .table-container {
+        border: 1px solid #060505;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px;
+        box-shadow: 0 0 10px rgba(52, 46, 46, 0.1); /* Optional: Adds a subtle shadow */
+    }
+    .white{
+        color:white
+    }
+
+    </style>
+<body>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-        <h1>Update profile</h1>
+        <h1 class="white">Update profile</h1>
         <div class="card" style="width: 18rem;">
             <div class="card-body">
             <form method="post">
-                <input type="text" class="form-control" id="inf_name" value="{{i.inf_name}}" name="inf_name" placeholder="Influencer name"required>
-                <input type="text" class="form-control" id="inf_passsword" value="{{i.inf_passsword}}"  name="inf_passsword" placeholder="Password" >
-                <input type="text" class="form-control" id="inf_category" value="{{i.inf_category}}" name="inf_category" placeholder="Category"  >
-                <input type="text" class="form-control" id="inf_niche" value="{{i.inf_niche}}" name="inf_niche" placeholder="Niche">
-                <input type="text" class="form-control" id="inf_reach" value="{{i.inf_reach}}" name="inf_reach" placeholder="Reach">
-                <label for="inf_image" class="form-label" Change profile picture:</label>
+                <label for="inf_name" class="form-label" ><strong>Influencer name:</strong></label>
+                <input type="text" class="form-control" id="inf_name" value="{{inf.inf_name}}" name="inf_name" placeholder="Influencer name"required>
+                <label for="inf_password" class="form-label" ><strong>Influencer password:</strong> </label>
+                <input type="text" class="form-control" id="inf_passsword" value="{{inf.inf_passsword}}"  name="inf_passsword" placeholder="Password" >
+                <label for="inf_category" class="form-label" ><strong>Influencer category:</strong> </label>
+                <input type="text" class="form-control" id="inf_category" value="{{inf.inf_category}}" name="inf_category" placeholder="Category"  >
+                <label for="inf_niche" class="form-label" ><strong>Influencer  niche:</strong></label>
+                <input type="text" class="form-control" id="inf_niche" value="{{inf.inf_niche}}" name="inf_niche" placeholder="Niche">
+                <label for="inf_reach" class="form-label" ><strong>Influencer reach:</strong></label>
+                <input type="text" class="form-control" id="inf_reach" value="{{inf.inf_reach}}" name="inf_reach" placeholder="Reach">
+                <label for="inf_image" class="form-label" ><strong>Change profile picture:</strong> </label>
                 <input type="file" class="form-control" name="inf_image" id="inf_image">                
-                <input type="number" value="{{i.inf_id}}" readonly hidden name="inf_id">     
+                <input type="number" value="{{inf.inf_id}}" readonly hidden name="inf_id">     
                 <button type="submit" class="btn btn-primary">Update</button>
  
             </form>

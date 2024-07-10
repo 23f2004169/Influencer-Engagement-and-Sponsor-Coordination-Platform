@@ -6,71 +6,86 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        .detail {
+            margin-bottom: 10px;
+        }
+        .detail strong {
+            display: inline-block;
+            width: 150px;
+        }
+    </style>
 </head>
-<h1>Welcome Admin</h1>
 <style>
-    body {
-        padding-top: 70px;
-        background-color: #eaea96;}
+    body {padding-top: 70px;background-color:rgb(34, 23, 59);}
+    .white{color:white}
     h1, h2 {margin-top: 20px;}
     table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
     .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    .right {float: right;margin: 10px; }
+    .card-container {display: flex;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line */
+            justify-content: space-between; /* Distribute space between cards */}
+        .card {width: 18rem;
+            margin-bottom: 20px; /* Adjust spacing between rows */
+            margin-right: 20px; /* Adjust spacing between columns */}
+        .card-body {
+            text-align: center; /* Center align content */}
+        .small-image { width: 100%; /* Make sure image fills its container */
+            height: auto;}
 </style>
-<body>
-   <nav class="navbar bg-body-tertiary fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">ADMIN DASHBOARD</a>
-            <a href="/ongoing_camp"><button class="btn btn-primary">ONGOING CAMPAIGNS</button></a>
-
-            <a href="{{url_for('adminsearch', search_type='common')}}"><button class="btn btn-outline-success" type="button">Search</button></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarlabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DETAILS </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/admin_dashboard">Home</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">VIEW ALL</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/campaigns">Campaigns</a></li>
-                                <li><a class="dropdown-item" href="/sponsors">Sponsors</a></li>
-                                <li><a class="dropdown-item" href="/influencers">Influencers</a></li>
-                                <li><a class="dropdown-item" href="/adrequests">Ad requests</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin_summary">SUMMARY</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/adreq_status">Accepted Adrequests</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin_login"><button class="btn btn-danger">Logout</button></a>
-                        </li>
-                        
-                    </ul>
-                </div>
+<nav class="navbar bg-body-tertiary fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">ADMIN DASHBOARD</a>
+        <a href="/admin_dashboard"><button class="btn btn-secondary">Home</button></a>
+        <a href="/ongoing_camp"><button class="btn btn-secondary">ONGOING CAMPAIGNS</button></a>
+        <a href="{{url_for('adminsearch', search_type='common')}}"><button class="btn btn-secondary">Search</button></a>
+        <a href="/admin_summary"><button class="btn btn-secondary">STATISTICS</button></a>
+  
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarlabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DETAILS </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/admin_dashboard">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">VIEW ALL</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/campaigns">Campaigns</a></li>
+                            <li><a class="dropdown-item" href="/sponsors">Sponsors</a></li>
+                            <li><a class="dropdown-item" href="/influencers">Influencers</a></li>
+                            <li><a class="dropdown-item" href="/adrequests">Ad requests</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/adreq_status">Accepted Adrequests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin_login"><button class="btn btn-danger">Logout</button></a>
+                    </li>
+                    
+                </ul>
             </div>
         </div>
-    </nav>
-    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-        <h1>Search Campaign results</h1>
-        <div class="card" style="width: 18rem;">
+    </div>
+  </nav> 
+    <div style="margin-top: 2%; margin-left: 5%; margin-right: 5%;">
+        <h1 class="white">Search Campaign results</h1>
+        <div class="card-container">
             {%for i in result%}
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                        <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="" class="small-image">
                         <p class="card-text"></p>{{i.niche}}</p>
                         <p class="card-text"></p>{{i.description}}</p>
                         <p class="card-text"></p>{{i.budget}}</p>

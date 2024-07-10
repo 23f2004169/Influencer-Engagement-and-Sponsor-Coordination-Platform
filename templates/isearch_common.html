@@ -10,30 +10,48 @@
 <body>
     <style>
         body {
-            padding-top: 70px;
-            background-color: #eaea96;}
+        padding-top: 70px;
+        background-color:rgb(34, 23, 59);}
         h1, h2 {margin-top: 20px;}
         table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
-        .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
-        .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
+    .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+        .table-container {
+        border: 1px solid #060505;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px;
+        box-shadow: 0 0 10px rgba(52, 46, 46, 0.1); /* Optional: Adds a subtle shadow */
+    }
+    .white{
+        color:white
+    }
+
     </style>
    
-    <nav class="navbar bg-body-tertiary fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
-            <a href="{{url_for('infsearch',search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
-            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
-            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
-            <li class="nav-item"><a href="/"><button class="btn btn-primary">STATS</button></a></li>
-            <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
-        </div>
+   <nav class="navbar bg-body-tertiary fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
+        <a href="{{url_for('inf_dashboard',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">Profile</button></a>
+        <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-secondary" type="button">Search for Campaigns</button></a>
+        <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">ACTIVE PUBLIC CAMPAIGNS</button></a>
+        <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-secondary">New Ad requests </button></a>
+        <a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">STATS</button></a>
+        <a href="/inf_login"><button class="btn btn-danger">Logout</button></a>
     </nav>
+    {%if message%}
+   <h1 class="white">{{message}}</h1>
+   {%endif%}
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
         <div class="card p-5" style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
             <h1 class="card-title">Search based on:</h1>
-            <a href="{{url_for('infsearch', search_type='niche',inf_id=inf.inf_id)}}"><button class="m-3 btn btn-primary">Campaign niche</button></a>
-            <a href="{{url_for('infsearch', search_type='camp_name',inf_id=inf.inf_id)}}"><button class="m-3 btn btn-primary">Campaign name</button></a>
-
+            {% if inf.flagged == 0 %}
+                <a href="{{url_for('infsearch', search_type='niche',inf_id=inf.inf_id)}}"><button class="m-3 btn btn-primary">Campaign niche</button></a>
+                <a href="{{url_for('infsearch', search_type='camp_name',inf_id=inf.inf_id)}}"><button class="m-3 btn btn-primary">Campaign name</button></a>
+            {%else%}
+                    <button type="button" class="m-3 btn btn-primary" disabled>Campaign niche</button>
+                    <button type="button" class="m-3 btn btn-primary" disabled>Campaign name</button>
+            {% endif %}
         </div>
     </div>
 </body>

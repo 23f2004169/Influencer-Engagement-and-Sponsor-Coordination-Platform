@@ -9,142 +9,92 @@
 </head>
 <body>
 <style>
-    body {
-        padding-top: 70px;
-        background-color: #eaea96;}
+     body {padding-top: 20px;background-color:rgb(34, 23, 59);}
+     .white{color:white}
     h1, h2 {margin-top: 20px;}
     table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
     .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
 </style>
 <nav class="navbar bg-body-tertiary fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">ADMIN DASHBOARD</a>
-        <a href="/ongoing_camp"><button class="btn btn-primary">ONGOING CAMPAIGNS</button></a>
+  <div class="container-fluid">
+      <a class="navbar-brand" href="/">ADMIN DASHBOARD</a>
+      <a href="/admin_dashboard"><button class="btn btn-secondary">Home</button></a>
+      <a href="/ongoing_camp"><button class="btn btn-secondary">ONGOING CAMPAIGNS</button></a>
+      <a href="{{url_for('adminsearch', search_type='common')}}"><button class="btn btn-secondary">Search</button></a>
+      <a href="/admin_summary"><button class="btn btn-secondary">STATISTICS</button></a>
 
-        <a href="find_details"><button class="btn btn-outline-success" type="button">FIND-Search for Campaigns, Sponsors, Influencers</button></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarlabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DETAILS </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/admin_dashboard">Home</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">VIEW ALL</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/campaigns">Campaigns</a></li>
-                            <li><a class="dropdown-item" href="/sponsors">Sponsors</a></li>
-                            <li><a class="dropdown-item" href="/influencers">Influencers</a></li>
-                            <li><a class="dropdown-item" href="/adrequests">Ad requests</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin_summary">SUMMARY</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/adreq_status">Accepted Adrequests</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin_login"><button class="btn btn-danger">Logout</button></a>
-                    </li>
-                    
-                </ul>
-            </div>
-        </div>
-    </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarlabel">
+          <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DETAILS </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="/admin_dashboard">Home</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">VIEW ALL</a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="/campaigns">Campaigns</a></li>
+                          <li><a class="dropdown-item" href="/sponsors">Sponsors</a></li>
+                          <li><a class="dropdown-item" href="/influencers">Influencers</a></li>
+                          <li><a class="dropdown-item" href="/adrequests">Ad requests</a></li>
+                      </ul>
+                  </li>
+                  
+                  <li class="nav-item">
+                      <a class="nav-link" href="/adreq_status">Accepted Adrequests</a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="/admin_login"><button class="btn btn-danger">Logout</button></a>
+                  </li>
+                  
+              </ul>
+          </div>
+      </div>
+  </div>
 </nav>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<div style="margin-top:5%; margin-left:5%; margin-right:5%;">
-    <h1>SUMMARY</h1>
-</div>
-<canvas id="myChart1" style="width:100%;max-width:700px"></canvas>
-<script>
-       const us = {{ unsp }};
-       const fs = {{ fsp }};
-       const ui = {{uninf}};
-       const fi={{finf}}
-       const xVals=["unflagged sponsors","flagged sponsors","unflagged influencers","flagged influencers"];
-       const yVals=[us,fs,ui,fs];
-       const barColors1 = ["#1e7145","#b91d47","#3e95cd","#8e5ea2"];
-       new Chart("myChart1", {
-      type: "pie",
-      data: {
-        labels: xVals,
-        datasets: [{
-          backgroundColor: barColors1,
-          data: yVals
-        }]
-      },
-      options: {
-        title: {
-          display: true,
-          text: "Flagged/unflagged Users"
-        }
-      },
-      scales: {y: {beginAtZero: true // barchart y-axis starts at zero
-                }
-      }
-    });
-</script> 
 
-<canvas id="myChart2" style="width:100%;max-width:600px"></canvas>
-<script>
-// Data passed from Flask
-const acpt = {{ adacpt }};
-const rej = {{ adrej }};
-const pend = {{adpend}};
-const xValues = ["Accepted", "Rejected", "Pending"];
-const yValues = [acpt, rej, pend];
-const barColors = ["#1e7145","#b91d47", "#e8c3b9"];
-new Chart("myChart2", {
-  type: "pie",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "Ad request status"
-    }
-  }
-});
-</script>
 
-<canvas id="myChart3" style="width:100%;max-width:600px"></canvas>
-<script>
-const private = {{ priv }};
-const public= {{ pub }};
-const xValues3 = ["Private","Public"];
-const yValues3 = [private,public];
-const barColors3 = ["#1e7145","#b91d47"];
-new Chart("myChart3", {
-  type: "pie",
-  data: {
-    labels: xValues3,
-    datasets: [{
-      backgroundColor: barColors3,
-      data: yValues3
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "Campaign visibility"
-    }
+<style>
+  body {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 20px;
   }
-});
-</script>
-   
+  .plot-container {
+      width: 45%; /* Adjust as needed based on your layout */
+      margin: 10px;
+      text-align: center;
+  }
+  .plot-container img {
+      max-width: 80%; /* Ensure images don't exceed container width */
+      height: auto; /* Maintain aspect ratio */
+  }
+</style>
+
+  <div class="plot-container">
+    <h2 class="white">Campaign visibility</h2>
+    <img src="/static/camp_visibility.png" alt="Campaign visibility Chart">
+  </div>
+  <div class="plot-container"> 
+  <h2 class="white">Ad request status</h2>
+  <img src="/static/ad_status.png" alt="Ad request status Chart">
+  </div>
+  <div class="plot-container">
+  <h2 class="white">Campaign Progress</h2>
+  <img src="/static/campaign_progress.png" alt="Campaign Progress Chart">
+  </div>
+  <div class="plot-container">
+  <h2 class="white">Flagged/unflagged Users</h2>
+  <img src="/static/users_flagged.png" alt="Flagged/unflagged Users">
+  </div>
 </body>
 </html>

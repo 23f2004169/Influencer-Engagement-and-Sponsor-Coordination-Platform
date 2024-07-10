@@ -11,56 +11,45 @@
     <style>
         body {
             padding-top: 70px;
-            background-color: #eaea96;}
-        h1, h2 {margin-top: 20px;}
-        table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
-        .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
-        .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+            background-color:rgb(34, 23, 59);
+            display: flex;
+            height: 100vh;
+        }
+        .plot-container {
+            width: 45%; /* Adjust as needed based on your layout */
+            margin: 10px;
+            text-align: center;
+        }
+        .plot-container img {
+            max-width: 80%; /* Ensure images don't exceed container width */
+            height: auto; /* Maintain aspect ratio */
+        }
+        .white{
+            color:white;
+        }
     </style>
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">INFLUENCER DASHBOARD</a>
-            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-outline-success" type="button">Search for Campaigns</button></a>
-            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-primary">ACTIVE PUBLIC CAMPAIGNS</button></a>
-            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-primary">New Ad requests </button></a>
-            <li class="nav-item"><a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-primary">STATS</button></a></li>
+            <a href="{{url_for('inf_dashboard',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">Profile</button></a>
+            <a href="{{url_for('infsearch', search_type='common',inf_id=inf.inf_id)}}"><button class="btn btn-secondary" type="button">Search for Campaigns</button></a>
+            <a href="{{url_for('active_camp',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">ACTIVE PUBLIC CAMPAIGNS</button></a>
+            <a href="{{url_for('new_adreq',inf_id=inf.inf_id) }}"><button class="btn btn-secondary">New Ad requests </button></a>
+            <li class="nav-item"><a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">STATS</button></a></li>
             <li class="nav-item"><a href="/inf_login"><button class="btn btn-danger">Logout</button></a></li>
         </div>
     </nav>
+    
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<div style="margin-top:5%; margin-left:5%; margin-right:5%;">
-    <h1>SUMMARY</h1>
+<div class="plot-container"> 
+<h2 class="white">Ad request status</h2>
+<img src="/static/i_ad_status.png" alt="Ad request status Chart">
 </div>
-<canvas id="myChart1" style="width:100%;max-width:600px"></canvas>
-<script>
-// Data passed from Flask
-const acpt = {{ adacpt }};
-const rej = {{ adrej }};
-const pend = {{adpend}};
-const xValues = ["Accepted", "Rejected", "Pending"];
-const yValues = [acpt, rej, pend];
-const barColors = ["#1e7145","#b91d47", "#e8c3b9"];
-new Chart("myChart1", {
-  type: "pie",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "Ad request status"
-    }
-  }
-});
-</script>  
 
-<h2>Campaign Progress</h2>
+<div class="plot-container"> 
+<h2 class="white">Campaign Progress</h2>
 <img src="/static/i_campaign_progress.png" alt="Campaign Progress Chart">
+</div>
 
 </body>
 </html>

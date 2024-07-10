@@ -2,9 +2,11 @@ from flask import current_app as app #alias for current running app
 from flask import render_template,url_for,redirect,request
 from application.models import *
 from datetime import datetime,date
-#import simplejson as json
 import decimal
+import matplotlib
+matplotlib.use('Agg')  # Use a non-interactive backend
 import matplotlib.pyplot as plt
+import numpy as np
 
 logged_admin=None
 logged_inf=None
@@ -110,12 +112,8 @@ def inf_flag(inf_id):
 
 @app.route("/adreq_status",methods=["GET"])
 def adreq_status():
-    adstatus=[]
     adreq=Adrequest.query.all()
-    for i in adreq:
-        if i.status=="accepted":
-            adstatus.append(i)
-    return render_template("adreq_status.html",adreq=adstatus)
+    return render_template("adreq_status.html",adreq=adreq)
 
 @app.route("/campaign/<int:camp_id>",methods=["GET","POST"])
 def camp_details(camp_id):
@@ -161,6 +159,111 @@ def del_inf(inf_id):
     db.session.delete(del_inf)
     db.session.commit()
     return redirect("/admin_dashboard")
+
+@app.route("/find_details/<search_type>",methods=["GET","POST"])
+def adminsearch(search_type):
+    global logged_admin
+    if not logged_admin:
+        return redirect(url_for("admin_login"))
+    if request.method=="GET":
+        if search_type=="common":
+            return render_template("asearch_common.html")
+        if search_type=="spon_name":
+            return render_template("asearch_spon.html")
+        if search_type=="inf_name":            
+            return render_template("asearch_inf.html")
+        if search_type=="camp_name":            
+            return render_template("asearch_camp.html")
+    if request.method=="POST":
+        if search_type=="spon_name":
+            spon_name=request.form.get("spon_name")
+            result=Sponsor.query.filter(Sponsor.spon_name.ilike(f"%{spon_name}%")).all()
+            return render_template("aresult_spon.html",result=result)
+        if search_type=="inf_name":
+            inf_name=request.form.get("inf_name")
+            result=Influencer.query.filter(Influencer.inf_name.ilike(f"%{inf_name}%")).all()
+            return render_template("aresult_inf.html",result=result)
+        if search_type=="camp_name":
+            camp_name=request.form.get("camp_name")
+            result=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
+            return render_template("aresult_camp.html",result=result)
+
+@app.route("/admin_summary",methods=["GET"])
+def admin_summary():
+    global logged_admin
+    if not logged_admin:
+        return redirect(url_for('admin_login'))
+    camps=Campaign.query.all()
+    ads=Adrequest.query.all()
+    spons=Sponsor.query.all()
+    infs=Influencer.query.all()
+    adacpt,adrej,adpend=0,0,0
+    for i in ads:
+        if i.status=="accepted":
+            adacpt+=1
+        if i.status=="rejected":
+            adrej+=1
+        if i.status=="pending":
+            adpend+=1
+    plt.title('Ad request status')
+    y = np.array([adacpt,adrej,adpend])
+    mylabels1= ["Accepted", "Rejected", "Pending"]
+    plt.pie(y, labels = mylabels1,autopct='%1.1f%%')
+    plt.savefig('static/ad_status.png')
+    plt.close()
+
+    unsp,fsp,uninf,finf=0,0,0,0
+    for i in spons:
+        if i.flagged==0:
+            unsp+=1
+        else:
+            fsp+=1  
+    for i in infs:
+        if i.flagged==0:
+            uninf+=1
+        else:
+            finf+=1
+    plt.title("Flagged/unflagged Users")
+    y = np.array([unsp,fsp,uninf,finf])
+    mylabels2= ["unflagged sponsors","flagged sponsors","unflagged influencers","flagged influencers"]
+    plt.pie(y, labels = mylabels2,autopct='%1.1f%%')
+    plt.savefig('static/users_flagged.png')
+    plt.close()
+
+    cname,cprog=[],[]
+    for camp in camps:
+        cname.append(camp.camp_name)
+        cprog.append(camp.progress)
+    x_labels = cname
+    y_values = cprog
+    plt.title('Campaign Progress')
+    plt.bar(x_labels, y_values, color='green', width=0.5)
+    plt.xlabel('Campaigns')
+    plt.ylabel('Progress')
+    # Add space between x-values
+    plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+    plt.tight_layout() 
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    for i in range(len(x_labels)):
+        plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
+    plt.savefig('static/campaign_progress.png')
+    plt.close()
+
+    priv,pub=0,0
+    for i in camps:
+        if i.visibility=="private":
+            priv+=1
+        elif i.visibility=="public":
+            pub+=1   
+    plt.title('Campaign visibility')
+    y = np.array([priv,pub])
+    mylabels2= ["Private","Public"]
+    plt.pie(y, labels = mylabels2,autopct='%1.1f%%')
+    plt.savefig('static/camp_visibility.png')
+    plt.close()
+    return render_template("admin_summary.html",spons=spons,infs=infs,camps=camps,ads=ads)
+
+
 
 
 
@@ -259,7 +362,7 @@ def new_adreq(inf_id):
     newlist=[]
     inf=Influencer.query.get(inf_id)
     for x in inf.inf_req:
-        if x.status=="pending":
+        if x.status=="pending" and inf.flagged==0:
             newlist.append(x)
         #print(newlist)
     return render_template('new_adreq.html',adreq=newlist,inf=inf)
@@ -311,6 +414,7 @@ def negotiate(inf_id,adreq_id):
         inf_msg=request.form.get("messages")
         if inf_id==infid:
             ad.messages+="//Influencer-"+infid +':'+ inf_msg+"//"
+            ad.messages = ad.messages.replace('//', '\n')
         db.session.commit()
         for x in inf.inf_req:
             if x.status=="pending":
@@ -324,7 +428,7 @@ def update_inf(inf_id):
         return redirect(url_for("inf_login"))
     if request.method=="GET":
         inf=Influencer.query.get(inf_id)
-        return render_template("update_inf.html",i=inf)
+        return render_template("update_inf.html",inf=inf)
     if request.method=="POST":
         inf_name=request.form.get("inf_name")
         inf_passsword=request.form.get("inf_password")
@@ -341,6 +445,87 @@ def update_inf(inf_id):
         update_inf.rating=rating
         db.session.commit()
         return redirect(url_for("inf_dashboard",inf_id=inf_id))
+
+@app.route("/infsearch/<search_type>/<inf_id>", methods=["GET", "POST"])
+def infsearch(search_type,inf_id):
+    global logged_inf
+    if not logged_inf:
+        return redirect(url_for("inf_login"))
+    inf=Influencer.query.get(inf_id)
+    if request.method=="GET":
+        if search_type=="common":
+            if inf.flagged==1:
+                return render_template("isearch_common.html",inf=inf,message="You do not have permission to perform this action. Please contact the admin for assistance.")
+            return render_template("isearch_common.html",inf=inf)
+        if search_type=="niche":            
+            return render_template("isearch_niche.html",inf=inf)
+        if search_type=="camp_name":            
+            return render_template("isearch_camp.html",inf=inf)
+    if request.method=="POST":
+        if search_type=="niche":
+            niche=request.form.get("niche")
+            sresult=Campaign.query.filter(Campaign.niche.ilike(f"%{niche}%")).all()
+            return render_template("iresult_camp.html",sresult=sresult,inf=inf)
+        if search_type=="camp_name":
+            camp_name=request.form.get("camp_name")
+            sresult=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
+            return render_template("iresult_camp.html",sresult=sresult,inf=inf)
+        
+@app.route("/inf_summary/<inf_id>",methods=["GET"])
+def inf_summary(inf_id):
+    global logged_inf
+    if not logged_inf:
+        return redirect(url_for('inf_login'))
+    camps=Campaign.query.all()
+    ads=Adrequest.query.all()
+    spons=Sponsor.query.all()
+    infs=Influencer.query.all()
+    inf=Influencer.query.get(inf_id)
+    adacpt,adrej,adpend=0,0,0
+    for i in inf.inf_req:
+        if i.status=="accepted":
+            adacpt+=1
+        if i.status=="rejected":
+            adrej+=1
+        if i.status=="pending":
+            adpend+=1
+    if adacpt == 0 and adrej == 0 and adpend == 0:
+        return "No data to display. Kindly search for campaigns and request for an advertisement."
+    y = np.array([adacpt,adrej,adpend])
+    y = np.nan_to_num(y, nan=0)  # Replace NaN values with 0
+    mylabels1= ["Accepted", "Rejected", "Pending"]
+    colors = ['#4CAF50', '#F44336', '#FFEB3B']
+    plt.title('Ad request status')
+    plt.pie(y, labels = mylabels1,autopct='%1.1f%%',colors=colors)
+    plt.savefig('static/i_ad_status.png')
+    plt.close()
+
+    camps=[]
+    for i in inf.inf_req:
+        camps.append(i.camp_id)
+    uniquecamps=set(camps)
+    lcamp=list(uniquecamps)
+    cname,cprog=[],[]
+    for i in lcamp:
+        c=Campaign.query.get(i)
+        cname.append(c.camp_name)
+        cprog.append(c.progress)
+    x_labels = cname
+    y_values = cprog
+    plt.bar(x_labels, y_values, color='blue', width=0.5)
+    plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+    plt.title('Campaign Progress')
+    plt.xlabel('Campaigns')
+    plt.ylabel('Progress')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout() 
+    for i in range(len(x_labels)):
+        plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
+    plt.savefig('static/i_campaign_progress.png')
+    plt.close()
+    return render_template("inf_summary.html",inf=inf,spons=spons,infs=infs,camps=camps,ads=ads)
+
+
 
 
 
@@ -438,9 +623,12 @@ def delete_camp(spon_id):
     global logged_spon
     if not logged_spon:
         return redirect(url_for("spon_login"))
+    spon=Sponsor.query.get(spon_id)
+    camps=Campaign.query.all()
     if request.method=="GET":
-        spon=Sponsor.query.get(spon_id)
-        camps=Campaign.query.all()
+        camps=[]
+        for x in spon.spon_camp:
+            camps.append(x)
         return render_template("delete_camp.html",camps=camps,spon=spon)
     if request.method=="POST":
         camp_id=request.form.get("camp_id")
@@ -448,16 +636,19 @@ def delete_camp(spon_id):
         if del_camp:
             db.session.delete(del_camp)
             db.session.commit()
-        return redirect(url_for("spon_dashboard",spon_id=spon_id))
+        return render_template("delete_camp.html",camps=camps,spon=spon)
 
 @app.route("/update_camp/<spon_id>",methods=["GET", "POST"])
 def update_camp(spon_id):
     global logged_spon
     if not logged_spon:
         return redirect(url_for("spon_login"))
+    spon=Sponsor.query.get(spon_id)
+    camps=Campaign.query.all()
     if request.method=="GET":
-        spon=Sponsor.query.get(spon_id)
-        camps=Campaign.query.all()
+        camps=[]
+        for x in spon.spon_camp:
+            camps.append(x)        
         return render_template("update_camp.html",camps=camps,spon=spon)
     if request.method=="POST":
         camp_name=request.form.get("camp_name")
@@ -477,7 +668,7 @@ def update_camp(spon_id):
         update_camp.goals= goals
         update_camp.description= description
         db.session.commit()
-        return redirect(url_for("spon_dashboard",spon_id=spon_id))
+        return render_template("update_camp.html",camps=camps,spon=spon)
 
 @app.route("/create_ad/<spon_id>",methods=["GET", "POST"])
 def create_ad(spon_id):
@@ -491,12 +682,10 @@ def create_ad(spon_id):
         adreq_name=request.form.get("adreq_name")
         camp_id=request.form.get("camp_id")
         pay_amount=request.form.get("pay_amount")
-        status=request.form.get("status")
         inf_id=request.form.get("inf_id")
         requirements=request.form.get("requirements")
-        messages=request.form.get("messages")
         spon_id=spon_id
-        new_ad=Adrequest(adreq_name=adreq_name,camp_id=camp_id,pay_amount=pay_amount,status=status,inf_id=inf_id,requirements=requirements,messages=messages)
+        new_ad=Adrequest(adreq_name=adreq_name,camp_id=camp_id,pay_amount=pay_amount,inf_id=inf_id,requirements=requirements)
         db.session.add(new_ad)
         db.session.commit()
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
@@ -506,9 +695,13 @@ def delete_ad(spon_id):
     global logged_spon
     if not logged_spon:
         return redirect(url_for("spon_login"))
+    spon=Sponsor.query.get(spon_id)
+    ads=Adrequest.query.all()
     if request.method=="GET":
-        spon=Sponsor.query.get(spon_id)
-        ads=Adrequest.query.all()
+        ads=[]
+        for x in spon.spon_camp:
+            for ad in x.camp_ads:
+                ads.append(ad)   
         return render_template("delete_ad.html",ads=ads,spon=spon)
     if request.method=="POST":
         ad_id=request.form.get("adreq_id")
@@ -516,16 +709,20 @@ def delete_ad(spon_id):
         if del_ad:
             db.session.delete(del_ad)
             db.session.commit()
-        return redirect(url_for("spon_dashboard",spon_id=spon_id))
+        return render_template("delete_ad.html",ads=ads,spon=spon)
     
 @app.route("/update_ad/<spon_id>",methods=["GET", "POST"])
 def update_ad(spon_id):
     global logged_spon
     if not logged_spon:
         return redirect(url_for("spon_login"))
+    spon=Sponsor.query.get(spon_id)
+    ads=Adrequest.query.all()
     if request.method=="GET":
-        spon=Sponsor.query.get(spon_id)
-        ads=Adrequest.query.all()
+        ads=[]
+        for x in spon.spon_camp:
+            for ad in x.camp_ads:
+                ads.append(ad)  
         return render_template("update_ad.html",ads=ads,spon=spon)
     if request.method=="POST":
         adreq_name=request.form.get("adreq_name")
@@ -545,7 +742,7 @@ def update_ad(spon_id):
         update_ad.requirements=requirements
         update_ad.messages=messages
         db.session.commit()
-        return redirect(url_for("spon_dashboard",spon_id=spon_id))
+        return render_template("update_ad.html",ads=ads,spon=spon)
 
 @app.route("/campaign/<int:camp_id>/<spon_id>/spon",methods=["GET"])
 def spon_camp_details(camp_id,spon_id):
@@ -589,7 +786,8 @@ def spon_negotiate(spon_id,adreq_id):
         sponid=request.form.get("spon_id")
         spon_msg=request.form.get("messages") 
         if spon.spon_id==sponid:
-            ad.messages+="//Sponsor-"+sponid+ ":" + spon_msg+"//"
+            ad.messages+=sponid+ "(Sponsor)"+":" + spon_msg+"//"
+            ad.messages = ad.messages.replace('//', '\n')
         db.session.commit()
         return render_template("spon_ad_details.html",spon=spon,adreq=ad)
 
@@ -599,7 +797,7 @@ def rate(inf_id,spon_id):
     if not logged_spon:
         return redirect(url_for("spon_login"))
     if request.method=="GET":
-        return render_template("rate.html",i=Influencer.query.get(inf_id))
+        return render_template("rate.html",i=Influencer.query.get(inf_id),spon=Sponsor.query.get(spon_id))
     if request.method=="POST":
         inf=Influencer.query.get(inf_id)
         inf.inf_total_rating+=decimal.Decimal(request.form.get("rating"))
@@ -614,38 +812,11 @@ def rembudget(camp_id,spon_id):
     spon=Sponsor.query.get(spon_id)
     camp=Campaign.query.get(camp_id)
     rem=camp.budget
-    print(rem)
     for ad in camp.camp_ads:
         rem-=ad.pay_amount
-    print(rem)
     if request.method=="GET":
         return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
     return render_template("spon_camp_details.html",rem=rem,camp=camp,spon=spon)
-
-
-
-@app.route("/infsearch/<search_type>/<inf_id>", methods=["GET", "POST"])
-def infsearch(search_type,inf_id):
-    global logged_inf
-    if not logged_inf:
-        return redirect(url_for("inf_login"))
-    inf=Influencer.query.get(inf_id)
-    if request.method=="GET":
-        if search_type=="common":
-            return render_template("isearch_common.html",inf=inf)
-        if search_type=="niche":            
-            return render_template("isearch_niche.html",inf=inf)
-        if search_type=="camp_name":            
-            return render_template("isearch_camp.html",inf=inf)
-    if request.method=="POST":
-        if search_type=="niche":
-            niche=request.form.get("niche")
-            sresult=Campaign.query.filter(Campaign.niche.ilike(f"%{niche}%")).all()
-            return render_template("iresult_camp.html",sresult=sresult,inf=inf)
-        if search_type=="camp_name":
-            camp_name=request.form.get("camp_name")
-            sresult=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
-            return render_template("iresult_camp.html",sresult=sresult,inf=inf)
 
 @app.route("/sponsearch/<search_type>/<spon_id>", methods=["GET", "POST"])
 def sponsearch(search_type,spon_id):
@@ -655,156 +826,30 @@ def sponsearch(search_type,spon_id):
     spon=Sponsor.query.get(spon_id)
     if request.method=="GET":
         if search_type=="common":
+            if spon.flagged==1:
+                return render_template("search_common.html",spon=spon,message="You do not have permission to perform this action. Please contact the admin for assistance.")
             return render_template("search_common.html",spon=spon)
         if search_type=="inf_name":
                 return render_template("search_infname.html",spon=spon)
         if search_type=="inf_niche":            
             return render_template("search_infniche.html",spon=spon)
-        if search_type=="camp_name":            
-            return render_template("search_campname.html",spon=spon)
+        if search_type=="inf_reach":            
+            return render_template("search_infreach.html",spon=spon)
     if request.method=="POST":
         if search_type=="inf_name":
             inf_name=request.form.get("inf_name")
             sresult=Influencer.query.filter(Influencer.inf_name.ilike(f"%{inf_name}%")).all()
+            print(sresult)
             return render_template("sresult_infname.html",sresult=sresult,spon=spon)
         if search_type=="inf_niche":
             inf_niche=request.form.get("inf_niche")
             sresult=Influencer.query.filter(Influencer.inf_niche.ilike(f"%{inf_niche}%")).all()
             return render_template("sresult_infname.html",sresult=sresult,spon=spon)
-        if search_type=="camp_name":
-            camp_name=request.form.get("camp_name")
-            sresult=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
-            return render_template("sresult_campname.html",sresult=sresult,spon=spon)
-        
-@app.route("/find_details/<search_type>",methods=["GET","POST"])
-def adminsearch(search_type):
-    global logged_admin
-    if not logged_admin:
-        return redirect(url_for("admin_login"))
-    if request.method=="GET":
-        if search_type=="common":
-            return render_template("asearch_common.html")
-        if search_type=="spon_name":
-            return render_template("asearch_spon.html")
-        if search_type=="inf_name":            
-            return render_template("asearch_inf.html")
-        if search_type=="camp_name":            
-            return render_template("asearch_camp.html")
-    if request.method=="POST":
-        if search_type=="spon_name":
-            spon_name=request.form.get("spon_name")
-            result=Sponsor.query.filter(Sponsor.spon_name.ilike(f"%{spon_name}%")).all()
-            return render_template("aresult_spon.html",result=result)
-        if search_type=="inf_name":
-            inf_name=request.form.get("inf_name")
-            result=Influencer.query.filter(Influencer.inf_name.ilike(f"%{inf_name}%")).all()
-            return render_template("aresult_inf.html",result=result)
-        if search_type=="camp_name":
-            camp_name=request.form.get("camp_name")
-            result=Campaign.query.filter(Campaign.camp_name.ilike(f"%{camp_name}%")).all()
-            return render_template("aresult_camp.html",result=result)
-
-
-
-@app.route("/admin_summary",methods=["GET"])
-def admin_summary():
-    global logged_admin
-    if not logged_admin:
-        return redirect(url_for('admin_login'))
-    camps=Campaign.query.all()
-    ads=Adrequest.query.all()
-    spons=Sponsor.query.all()
-    infs=Influencer.query.all()
-    ads_json=[adrequest.to_json() for adrequest in ads]
-    spons_json=[sponsor.to_json()for sponsor in spons]
-    infs_json=[influencer.to_json()for influencer in infs]
-    camps_json=[campaign.to_json() for campaign in camps]
-    adacpt,adrej,adpend=0,0,0
-    for i in ads:
-        if i.status=="accepted":
-            adacpt+=1
-        if i.status=="rejected":
-            adrej+=1
-        if i.status=="pending":
-            adpend+=1
-    unsp,fsp,uninf,finf=0,0,0,0
-    for i in spons:
-        if i.flagged==0:
-            unsp+=1
-        else:
-            fsp+=1  
-    for i in infs:
-        if i.flagged==0:
-            uninf+=1
-        else:
-            finf+=1
-    priv,pub=0,0
-    for i in camps:
-        if i.visibility=="private":
-            priv+=1
-        elif i.visibility=="public":
-            pub+=1   
-    return render_template("admin_summary.html",pub=pub,priv=priv,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,unsp=unsp,fsp=fsp,uninf=uninf,finf=finf,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
-
-@app.route("/inf_summary/<inf_id>",methods=["GET"])
-def inf_summary(inf_id):
-    global logged_inf
-    if not logged_inf:
-        return redirect(url_for('inf_login'))
-    camps=Campaign.query.all()
-    ads=Adrequest.query.all()
-    spons=Sponsor.query.all()
-    infs=Influencer.query.all()
-    inf=Influencer.query.get(inf_id)
-    ads_json=[adrequest.to_json() for adrequest in ads]
-    spons_json=[sponsor.to_json()for sponsor in spons]
-    infs_json=[influencer.to_json()for influencer in infs]
-    camps_json=[campaign.to_json() for campaign in camps]
-    adacpt,adrej,adpend=0,0,0
-    for i in inf.inf_req:
-        if i.status=="accepted":
-            adacpt+=1
-        if i.status=="rejected":
-            adrej+=1
-        if i.status=="pending":
-            adpend+=1
-    camps=[]
-    for i in inf.inf_req:
-        camps.append(i.camp_id)
-    uniquecamps=set(camps)
-    lcamp=list(uniquecamps)
-    #print(lcamp)
-    out=[]
-    cname,cprog=[],[]
-    for i in lcamp:
-        c=Campaign.query.get(i)
-        cname.append(c.camp_name)
-        cprog.append(c.progress)
-        out.append(c)
-    print(out)
-    print(cname,cprog)
-    x_labels = cname
-    y_values = cprog
-    plt.bar(x_labels, y_values, color='green', width=0.5)
-    plt.title('Campaign Progress')
-    plt.xlabel('Campaigns')
-    plt.ylabel('Progress')
-    plt.xticks(rotation=45, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout() 
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.savefig('static/i_campaign_progress.png')
-    plt.close()
-    return render_template("inf_summary.html",inf=inf,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
-
-'''cname,cprog=[],[]
-    for ad in inf.inf_req:
-        for i in out:
-            if ad.camp_id==i.camp_id:
-                cname.append(i.camp_name)
-                cprog.append(i.progress)
-    print(cname,cprog)  ''' 
-    
+        if search_type=="inf_reach":
+            reach_min=request.form.get("inf_reach")
+            sresult = Influencer.query.filter(Influencer.inf_reach >= int(reach_min)).all()
+            return render_template("sresult_infname.html",sresult=sresult,spon=spon)
+          
 @app.route("/spon_summary/<spon_id>",methods=["GET"])
 def spon_summary(spon_id):
     global logged_spon
@@ -815,11 +860,30 @@ def spon_summary(spon_id):
     spons=Sponsor.query.all()
     infs=Influencer.query.all()
     spon=Sponsor.query.get(spon_id)
-    ads_json=[adrequest.to_json() for adrequest in ads]
-    spons_json=[sponsor.to_json()for sponsor in spons]
-    infs_json=[influencer.to_json()for influencer in infs]
-    camps_json=[campaign.to_json() for campaign in camps]
     adacpt,adrej,adpend,pub,priv=0,0,0,0,0
+    cname,cprog=[],[]
+
+    for camp in camps:
+        cname.append(camp.camp_name)
+        cprog.append(camp.progress)
+    x_labels = cname
+    y_values = cprog
+    plt.title('Campaign Progress')
+    '''fig, ax = plt.subplots() #remove white bg
+    fig.patch.set_alpha(0.0)
+    ax.patch.set_alpha(0.0)'''
+    plt.bar(x_labels, y_values, color='green', width=0.5)
+    plt.xlabel('Campaigns')
+    plt.ylabel('Progress')
+    # Add space between x-values
+    plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+    plt.tight_layout() 
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    for i in range(len(x_labels)):
+        plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
+    plt.savefig('static/s_campaign_progress.png')
+    plt.close()
+
     for camp in spon.spon_camp:
         for i in camp.camp_ads:
             if i.status=="accepted":
@@ -828,31 +892,26 @@ def spon_summary(spon_id):
                 adrej+=1
             if i.status=="pending":
                 adpend+=1
+    plt.title('Ad request status')
+    y = np.array([adacpt,adrej,adpend])
+    mylabels1= ["Accepted", "Rejected", "Pending"]
+    plt.pie(y, labels = mylabels1,autopct='%1.1f%%')#percent
+    plt.savefig('static/s_ad_status.png')
+    plt.close()
+    
     for camp in spon.spon_camp:
         if camp.visibility=="private":
             priv+=1
         elif camp.visibility=="public":
             pub+=1
-    cname,cprog=[],[]
-    for camp in spon.spon_camp:
-        cname.append(camp.camp_name)
-        cprog.append(camp.progress)
-    print(cname,cprog)
-    
-    x_labels = cname
-    y_values = cprog
-
-    plt.bar(x_labels, y_values, color='green', width=0.5)
-    plt.title('Campaign Progress')
-    plt.xlabel('Campaigns')
-    plt.ylabel('Progress')
-    plt.xticks(rotation=45, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout() 
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.savefig('static/s_campaign_progress.png')
+    plt.title('Campaign visibility')
+    y = np.array([priv,pub])
+    mylabels2= ["Private","Public"]
+    plt.pie(y, labels = mylabels2,autopct='%1.1f%%')
+    plt.savefig('static/s_camp_visibility.png')
     plt.close()
-    return render_template("spon_summary.html",cprog=cprog,cname=cname,spon=spon,priv=priv,pub=pub,spons_json=spons_json,infs_json=infs_json,camps_json=camps_json,ads_json=ads_json,adacpt=adacpt, adrej=adrej, adpend=adpend)
+
+    return render_template("spon_summary.html",spon=spon,spons=spons,infs=infs,camps=camps,ads=ads)
 
 
 
