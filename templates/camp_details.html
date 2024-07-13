@@ -10,10 +10,33 @@
 <style>
     body {padding-top: 20px;background-color:rgb(34, 23, 59);}
     .white{color:white}
-    h1, h2 {margin-top: 50px;}
+    .small-image { width: 40%; 
+        height: 30%;}
+    h1, h2 {margin-top: 20px;}
     table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
     .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    .container {
+            background-color: #ffffff; 
+            border: 1px solid #ccc; 
+            padding: 20px;
+            max-width: 700px; /* Set a maximum width for the container */
+            margin: 20px auto; /* Center the container and add space around it */
+            text-align: center;
+        }
+
+        .container h1 {
+            font-size: 2rem; /* Larger heading */
+            margin-bottom: 20px; /* Space below heading */
+        }
+
+        .detail {
+            margin-bottom: 10px; /* Space between detail items */
+        }
+
+        .detail strong {
+            margin-right: 10px; /* Space between label and value */
+        }
 </style>
         
 <body>      
@@ -61,36 +84,20 @@
         </div>
     </nav>
    
-    <style>
-        .container {
-            background-color: #ffffff; 
-            border: 1px solid #ccc; 
-            padding: 20px;
-        }
-
-        .container h1 {
-            font-size: 2rem; /* Larger heading */
-            margin-bottom: 20px; /* Space below heading */
-        }
-
-        .detail {
-            margin-bottom: 10px; /* Space between detail items */
-        }
-
-        .detail strong {
-            margin-right: 10px; /* Space between label and value */
-        }
-    </style>
+   
     <div class="container mt-5">
         <h1 class="mb-4">Campaign Details</h1>
         <div class="detail"><strong>Campaign ID:</strong> {{camp.camp_id}}</div>
         <div class="detail"><strong>Campaign Name:</strong> {{camp.camp_name}}</div>
+        <img id="image" src="/static/{{ camp.camp_id }}.jpeg" alt="" class="small-image">
         <div class="detail"><strong>Visibility:</strong> {{camp.visibility}}</div>
         <div class="detail"><strong>Start Date:</strong> {{camp.start_date}}</div>
         <div class="detail"><strong>End Date:</strong> {{camp.end_date}}</div>
         <div class="detail"><strong>Budget:</strong> {{camp.budget}}</div>
         <div class="detail"><strong>Goals:</strong> {{camp.goals}}</div>
         <div class="detail"><strong>Description:</strong> {{camp.description}}</div>
+        <div class="detail"><strong>Niche</strong> {{camp.niche}}</div>
+        <div class="detail"><strong>Progress</strong> {{camp.progress}}</div>
         <div class="detail"><strong>Flagged:</strong> {{camp.flagged}}</div>
         <a href="{{url_for('camp_flag', camp_id=camp.camp_id) }}"><button id='flag' class="btn btn-outline-success" type="button">Flag/Unflag </button></a>
 

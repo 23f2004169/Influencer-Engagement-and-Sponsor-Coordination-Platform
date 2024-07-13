@@ -93,19 +93,24 @@
       </style>
       
     
-   
+    {%if pub!=0 or priv!=0%}
     <div class="plot-container"> 
     <h2 class="white">Campaign visibility</h2>
     <img src="/static/s_camp_visibility.png" alt="Campaign visibility Chart">
     </div>
+    {%endif%}
+    {%if adpend!=0 or adacpt!=0 or adrej!=0%}
     <div class="plot-container"> 
     <h2 class="white">Ad request status</h2>
     <img src="/static/s_ad_status.png" alt="Ad request status Chart">
     </div>
+    {%endif%}
+    {%if cname!=[] and cprog!=[]%}
     <div class="plot-container"> 
     <h2 class="white">Campaign Progress</h2>
     <img src="/static/s_campaign_progress.png" alt="Campaign Progress Chart">
     </div>
+    {%endif%}
 
 </body>
 </html>

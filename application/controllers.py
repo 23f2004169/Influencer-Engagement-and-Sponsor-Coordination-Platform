@@ -12,6 +12,8 @@ logged_admin=None
 logged_inf=None
 logged_spon=None
 
+#ADMIN
+
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -266,6 +268,7 @@ def admin_summary():
 
 
 
+#INFLUENCER
 
 @app.route('/inf_reg', methods=['GET','POST'])
 def inf_reg():
@@ -278,13 +281,12 @@ def inf_reg():
         inf_category=request.form.get("inf_category")
         inf_niche=request.form.get("inf_niche")
         inf_reach=request.form.get("inf_reach")
-        rating=request.form.get("rating")
         try:
             exist=Influencer.query.filter_by(inf_id=inf_id).first()
             if exist:
                 return render_template("inf_reg.html",message="Influencer username already exists")
             else:
-                new_inf=Influencer(inf_id=inf_id,inf_name=inf_name,inf_password=inf_password, inf_category= inf_category,inf_niche=inf_niche,inf_reach=inf_reach,rating=rating)
+                new_inf=Influencer(inf_id=inf_id,inf_name=inf_name,inf_password=inf_password, inf_category= inf_category,inf_niche=inf_niche,inf_reach=inf_reach)
                 db.session.add(new_inf)
                 db.session.commit()
                 global logged_inf
@@ -413,14 +415,37 @@ def negotiate(inf_id,adreq_id):
         infid=request.form.get("inf_id")
         inf_msg=request.form.get("messages")
         if inf_id==infid:
-            ad.messages+="//Influencer-"+infid +':'+ inf_msg+"//"
+            ad.messages+=infid +"(Influencer)"+':'+ inf_msg+"//"
             ad.messages = ad.messages.replace('//', '\n')
         db.session.commit()
         for x in inf.inf_req:
             if x.status=="pending":
                 newlist.append(x)
-        return render_template("new_adreq.html",inf=inf,adreq=newlist)
-    
+        return render_template("inf_dashboard.html",inf=inf)
+
+@app.route('/influencer/<inf_id>/progress',methods=["GET","POST"])
+def progress(inf_id):
+    inf=Influencer.query.get(inf_id)
+    campid=[]
+    for i in inf.inf_req:
+        if i.status=="accepted":
+            campid.append(i.camp_id)
+    uniquecamps=set(campid)
+    lcamp=list(uniquecamps)
+    camps=[]
+    for i in lcamp:
+        c=Campaign.query.get(i)
+        camps.append(c)
+    if request.method=="GET":
+        return render_template("inf_progress.html",inf=inf,camps=camps)
+    if request.method=="POST":
+        progress=request.form.get("progress")
+        camp_id=request.form.get("camp_id")
+        update_camp=Campaign.query.get(camp_id)
+        update_camp.progress= progress
+        db.session.commit()
+        return render_template("inf_progress.html",camps=camps,inf=inf)
+   
 @app.route("/update_inf/<inf_id>",methods=["GET", "POST"])
 def update_inf(inf_id):
     global logged_inf
@@ -489,20 +514,20 @@ def inf_summary(inf_id):
             adrej+=1
         if i.status=="pending":
             adpend+=1
-    if adacpt == 0 and adrej == 0 and adpend == 0:
-        return "No data to display. Kindly search for campaigns and request for an advertisement."
-    y = np.array([adacpt,adrej,adpend])
-    y = np.nan_to_num(y, nan=0)  # Replace NaN values with 0
-    mylabels1= ["Accepted", "Rejected", "Pending"]
-    colors = ['#4CAF50', '#F44336', '#FFEB3B']
-    plt.title('Ad request status')
-    plt.pie(y, labels = mylabels1,autopct='%1.1f%%',colors=colors)
-    plt.savefig('static/i_ad_status.png')
-    plt.close()
+    if adpend!=0 or adacpt!=0 or adrej!=0:
+        y = np.array([adacpt,adrej,adpend])
+        y = np.nan_to_num(y, nan=0)  # Replace NaN values with 0
+        mylabels1= ["Accepted", "Rejected", "Pending"]
+        colors = ['#4CAF50', '#F44336', '#FFEB3B']
+        plt.title('Ad request status')
+        plt.pie(y, labels = mylabels1,autopct='%1.1f%%',colors=colors)
+        plt.savefig('static/i_ad_status.png')
+        plt.close()
 
     camps=[]
     for i in inf.inf_req:
-        camps.append(i.camp_id)
+        if i.status=="accepted":
+            camps.append(i.camp_id)
     uniquecamps=set(camps)
     lcamp=list(uniquecamps)
     cname,cprog=[],[]
@@ -512,22 +537,23 @@ def inf_summary(inf_id):
         cprog.append(c.progress)
     x_labels = cname
     y_values = cprog
-    plt.bar(x_labels, y_values, color='blue', width=0.5)
-    plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
-    plt.title('Campaign Progress')
-    plt.xlabel('Campaigns')
-    plt.ylabel('Progress')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout() 
-    for i in range(len(x_labels)):
-        plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
-    plt.savefig('static/i_campaign_progress.png')
-    plt.close()
-    return render_template("inf_summary.html",inf=inf,spons=spons,infs=infs,camps=camps,ads=ads)
+    if cname!=[] and cprog!=[]:
+        plt.bar(x_labels, y_values, color='blue', width=0.5)
+        plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+        plt.title('Campaign Progress')
+        plt.xlabel('Campaigns')
+        plt.ylabel('Progress')
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout() 
+        for i in range(len(x_labels)):
+            plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
+        plt.savefig('static/i_campaign_progress.png')
+        plt.close()
+    return render_template("inf_summary.html",inf=inf,spons=spons,infs=infs,camps=camps,ads=ads,cname=cname,cprog=cprog,adpend=adpend,adrej=adrej,adacpt=adacpt)
 
 
 
-
+#SPONSOR
 
 @app.route('/spon_reg', methods=['GET','POST'])
 def spon_reg():
@@ -613,7 +639,8 @@ def create_camp(spon_id):
         goals=request.form.get("goals")
         spon_id=spon_id
         description=request.form.get("description")
-        new_camp=Campaign(camp_name=camp_name,start_date=start_date,end_date=end_date,budget=budget,visibility=visibility,goals=goals,description=description,spon_id=spon_id)
+        niche=request.form.get("niche")
+        new_camp=Campaign(camp_name=camp_name,start_date=start_date,end_date=end_date,budget=budget,niche=niche,visibility=visibility,goals=goals,description=description,spon_id=spon_id)
         db.session.add(new_camp)
         db.session.commit()
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
@@ -636,7 +663,10 @@ def delete_camp(spon_id):
         if del_camp:
             db.session.delete(del_camp)
             db.session.commit()
-        return render_template("delete_camp.html",camps=camps,spon=spon)
+        scamp=[]
+        for x in spon.spon_camp:
+            scamp.append(x) 
+        return render_template("delete_camp.html",camps=scamp,spon=spon)
 
 @app.route("/update_camp/<spon_id>",methods=["GET", "POST"])
 def update_camp(spon_id):
@@ -644,12 +674,11 @@ def update_camp(spon_id):
     if not logged_spon:
         return redirect(url_for("spon_login"))
     spon=Sponsor.query.get(spon_id)
-    camps=Campaign.query.all()
     if request.method=="GET":
-        camps=[]
+        scamp=[]
         for x in spon.spon_camp:
-            camps.append(x)        
-        return render_template("update_camp.html",camps=camps,spon=spon)
+            scamp.append(x)        
+        return render_template("update_camp.html",camps=scamp,spon=spon)
     if request.method=="POST":
         camp_name=request.form.get("camp_name")
         start_date=request.form.get("start_date")
@@ -658,6 +687,8 @@ def update_camp(spon_id):
         visibility=request.form.get("visibility")
         goals=request.form.get("goals")
         description=request.form.get("description")
+        niche=request.form.get("niche")
+        progress=request.form.get("progress")
         camp_id=request.form.get("camp_id")
         update_camp=Campaign.query.get(camp_id)
         update_camp.camp_name=camp_name       
@@ -667,8 +698,13 @@ def update_camp(spon_id):
         update_camp.visibility=visibility
         update_camp.goals= goals
         update_camp.description= description
+        update_camp.niche=niche
+        update_camp.progress= progress
         db.session.commit()
-        return render_template("update_camp.html",camps=camps,spon=spon)
+        scamp=[]
+        for x in spon.spon_camp:
+            scamp.append(x) 
+        return render_template("update_camp.html",camps=scamp,spon=spon)
 
 @app.route("/create_ad/<spon_id>",methods=["GET", "POST"])
 def create_ad(spon_id):
@@ -709,6 +745,10 @@ def delete_ad(spon_id):
         if del_ad:
             db.session.delete(del_ad)
             db.session.commit()
+        ads=[]
+        for x in spon.spon_camp:
+            for ad in x.camp_ads:
+                ads.append(ad)
         return render_template("delete_ad.html",ads=ads,spon=spon)
     
 @app.route("/update_ad/<spon_id>",methods=["GET", "POST"])
@@ -742,6 +782,10 @@ def update_ad(spon_id):
         update_ad.requirements=requirements
         update_ad.messages=messages
         db.session.commit()
+        ads=[]
+        for x in spon.spon_camp:
+            for ad in x.camp_ads:
+                ads.append(ad)
         return render_template("update_ad.html",ads=ads,spon=spon)
 
 @app.route("/campaign/<int:camp_id>/<spon_id>/spon",methods=["GET"])
@@ -863,26 +907,27 @@ def spon_summary(spon_id):
     adacpt,adrej,adpend,pub,priv=0,0,0,0,0
     cname,cprog=[],[]
 
-    for camp in camps:
+    for camp in spon.spon_camp:
         cname.append(camp.camp_name)
         cprog.append(camp.progress)
     x_labels = cname
     y_values = cprog
-    plt.title('Campaign Progress')
     '''fig, ax = plt.subplots() #remove white bg
     fig.patch.set_alpha(0.0)
     ax.patch.set_alpha(0.0)'''
-    plt.bar(x_labels, y_values, color='green', width=0.5)
-    plt.xlabel('Campaigns')
-    plt.ylabel('Progress')
-    # Add space between x-values
-    plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
-    plt.tight_layout() 
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    for i in range(len(x_labels)):
-        plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
-    plt.savefig('static/s_campaign_progress.png')
-    plt.close()
+    if cname!=[] and cprog!=[]:
+        plt.title('Campaign Progress')
+        plt.bar(x_labels, y_values, color='green', width=0.5)
+        plt.xlabel('Campaigns')
+        plt.ylabel('Progress')
+        # Add space between x-values
+        plt.xticks(range(len(x_labels)), x_labels, rotation=40, ha='right', fontsize=10)  # Adjust rotation, alignment, and font size
+        plt.tight_layout() 
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        for i in range(len(x_labels)):
+                plt.text(i, y_values[i] + 1, f'{y_values[i]}%', ha='center', va='bottom')#percent
+        plt.savefig('static/s_campaign_progress.png')
+        plt.close()
 
     for camp in spon.spon_camp:
         for i in camp.camp_ads:
@@ -892,37 +937,35 @@ def spon_summary(spon_id):
                 adrej+=1
             if i.status=="pending":
                 adpend+=1
-    plt.title('Ad request status')
-    y = np.array([adacpt,adrej,adpend])
-    mylabels1= ["Accepted", "Rejected", "Pending"]
-    plt.pie(y, labels = mylabels1,autopct='%1.1f%%')#percent
-    plt.savefig('static/s_ad_status.png')
-    plt.close()
+    if adpend!=0 or adacpt!=0 or adrej!=0:
+        plt.title('Ad request status')
+        y = np.array([adacpt,adrej,adpend])
+        mylabels1= ["Accepted", "Rejected", "Pending"]
+        plt.pie(y, labels = mylabels1,autopct='%1.1f%%')#percent
+        plt.savefig('static/s_ad_status.png')
+        plt.close()
     
     for camp in spon.spon_camp:
         if camp.visibility=="private":
             priv+=1
         elif camp.visibility=="public":
             pub+=1
-    plt.title('Campaign visibility')
-    y = np.array([priv,pub])
-    mylabels2= ["Private","Public"]
-    plt.pie(y, labels = mylabels2,autopct='%1.1f%%')
-    plt.savefig('static/s_camp_visibility.png')
-    plt.close()
+    if pub!=0 or priv!=0:
+        plt.title('Campaign visibility')
+        y = np.array([priv,pub])
+        mylabels2= ["Private","Public"]
+        plt.pie(y, labels = mylabels2,autopct='%1.1f%%')
+        plt.savefig('static/s_camp_visibility.png')
+        plt.close()
 
-    return render_template("spon_summary.html",spon=spon,spons=spons,infs=infs,camps=camps,ads=ads)
+    return render_template("spon_summary.html",spon=spon,spons=spons,infs=infs,camps=camps,ads=ads,cname=cname,cprog=cprog,adpend=adpend,adrej=adrej,adacpt=adacpt,pub=pub,priv=priv)
 
 
 
 #Ability to negotiate the “payment_amount” for a particular ad
 
 
-'''progress% 
-   3 search bar 
-   dummydata
-   negotiation table 
-   links link'''  
+
 
 
     

@@ -27,7 +27,7 @@
         .card-body {
             text-align: center; /* Center align content */}
         .small-image { width: 100%; /* Make sure image fills its container */
-            height: auto;}
+            height: 50%;}
         .white{color:white}
     </style>
     <img id="image" src="/static/{{spon.spon_id}}.jpeg" alt="" class="top ">
@@ -50,7 +50,7 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{{url_for('spon_dashboard',spon_id=spon.spon_id) }}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">CAMPAIGN MANAGEMENT</a>
@@ -90,7 +90,8 @@
             </div>
         </div>
     </nav>
-
+    
+    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
     <h3 class="white">Ongoing Campaigns sponsored by you</h3>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
         <div class="card-container">
@@ -101,7 +102,9 @@
                     <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="" class="small-image">
                     <p class="card-text">{{ i.description }}</p>
                     {% for ad in i.camp_ads %}
-                    <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id, spon_id=spon.spon_id) }}" class="btn btn-secondary" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                    <div class="card-body" style="margin-top:0.1%; margin-left:0.1%; margin-right:0.1%;">
+                    <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id, spon_id=spon.spon_id) }}" class="btn btn-secondary" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.adreq_name }}</a>
+                    </div>
                     {% endfor %}
                     <a href="{{ url_for('spon_camp_details', camp_id=i.camp_id, spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                 </div>

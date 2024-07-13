@@ -14,6 +14,15 @@
     table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
     .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    .container {background-color: #ffffff; 
+            border: 1px solid #ccc; 
+            padding: 20px;}
+    .container h1 {font-size: 2rem; /* Larger heading */
+            margin-bottom: 20px; /* Space below heading */ }
+    .detail {
+            margin-bottom: 10px; /* Space between detail items */}
+    .detail strong {
+            margin-right: 10px; /* between label and value */}
 </style>
         
 <body>      
@@ -49,7 +58,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="/adreq_status">Accepted Adrequests</a>
+                            <a class="nav-link" href="/adreq_status">Adrequest status</a>
                         </li>
                         <li class="nav-item">
                             <a href="/admin_login"><button class="btn btn-danger">Logout</button></a>
@@ -61,26 +70,6 @@
         </div>
     </nav>
    
-    <style>
-        .container {
-            background-color: #ffffff; 
-            border: 1px solid #ccc; 
-            padding: 20px;
-        }
-
-        .container h1 {
-            font-size: 2rem; /* Larger heading */
-            margin-bottom: 20px; /* Space below heading */
-        }
-
-        .detail {
-            margin-bottom: 10px; /* Space between detail items */
-        }
-
-        .detail strong {
-            margin-right: 10px; /* Space between label and value */
-        }
-    </style>
 
     <div class="container mt-5">
         <h1 class="mb-4">Adrequest Details</h1>
@@ -88,7 +77,8 @@
         <div class="detail"><strong>Adrequest Name:</strong> {{ adreq.adreq_name }}</div>
         <div class="detail"><strong>Campaign ID:</strong> {{ adreq.camp_id }}</div>
         <div class="detail"><strong>Influencer ID:</strong> {{ adreq.inf_id }}</div>
-        <div class="detail"><strong>Requirements:</strong> {{ adreq.requirements }}</div>
+        <div class="detail"><strong>Status:</strong> {{ adreq.status }}</div>
+        <div class="detail"><strong>Requirements: {{ adreq.requirements }}</strong></div>
         <div class="detail"><strong>Payment amount:</strong> {{ adreq.pay_amount }}</div>
     </div>
 </body>

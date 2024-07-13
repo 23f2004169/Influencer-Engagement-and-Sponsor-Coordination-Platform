@@ -80,7 +80,8 @@
         {% for i in camps %}
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">{{i.camp_name}}</h5>
+                    <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                    <img id="image" src="/static/{{i.camp_id}}.jpeg" alt="" class="small-image">
                     <h6 class="card-subtitle mb-2 text-body-secondary">{{i.description}}</h6>
                     <form method="post">
                         <input type="number" value="{{i.camp_id}}" readonly hidden name="camp_id">

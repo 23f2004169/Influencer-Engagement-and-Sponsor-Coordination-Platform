@@ -81,6 +81,7 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
             <form method="post">
+                <div><h2><strong>Campaign id:{{i.camp_id}}</strong></h2></div>
                 <label for="camp_name"><strong>Campaign Name:</strong></label>
                 <input type="text" class="form-control" id="camp_name" value="{{i.camp_name}}" name="camp_name" required>
                 <label for="start_date"><strong>Start Date:</strong></label>
@@ -95,6 +96,10 @@
                 <input type="text" class="form-control" id="goals" value="{{i.goals}}" name="goals" >
                 <label for="description"><strong>Description:</strong></label>
                 <input type="text" class="form-control" id="description" value="{{i.description}}" name="description" > 
+                <label for="niche"><strong>Niche:</strong></label>
+                <input type="text" class="form-control" id="niche" value="{{i.niche}}" name="niche" > 
+                <label for="progress"><strong>Progress:</strong></label>
+                <input type="text" class="form-control" id="progress" value="{{i.progress}}" name="progress" > 
                 <label for="camp_image" class="form-label"><strong>Upload campaign Image:</strong></label>
                 <input type="file" class="form-control" name="camp_image" id="camp_image">      
                 <input type="number" value="{{i.camp_id}}" readonly hidden name="camp_id"> 

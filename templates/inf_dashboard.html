@@ -52,19 +52,22 @@
         .btn {
             margin-top: 10px;
         }
+        .small-image { width: 50%; 
+            height: auto;}
     </style>
 </head>
 <body>
     <div class="profile-container">
         <h1>Welcome {{ inf.inf_name }}</h1>
-        <h2>PROFILE</h2>
-        <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="profile picture">
-        <h2>Rating: {{ inf.rating }}</h2>
-        <h2>Reach: {{ inf.inf_reach }}</h2>
-        <h2>Niche: {{ inf.inf_niche }}</h2>
-        <h2>Category: {{ inf.inf_category }}</h2>
+        <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="profile" class=" small-image">
+        <h3>Rating: {{ inf.rating }}</h3>
+        <h3>Reach: {{ inf.inf_reach }}</h3>
+        <h3>Niche: {{ inf.inf_niche }}</h3>
+        <h3>Category: {{ inf.inf_category }}</h3>
         <a href="{{ url_for('update_inf', inf_id=inf.inf_id) }}" class="btn btn-secondary">Update profile</a>
         <a href="{{ url_for('earnings', inf_id=inf.inf_id) }}" class="btn btn-secondary">Earnings {{ earned }}</a>
+        <a href="{{ url_for('progress', inf_id=inf.inf_id) }}" class="btn btn-secondary">Campaign Progress</a>
+
     </div>
 </body>
 </html>

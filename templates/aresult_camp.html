@@ -32,8 +32,8 @@
             margin-right: 20px; /* Adjust spacing between columns */}
         .card-body {
             text-align: center; /* Center align content */}
-        .small-image { width: 100%; /* Make sure image fills its container */
-            height: auto;}
+        .small-image {width: 200px; height: auto; }
+
 </style>
 <nav class="navbar bg-body-tertiary fixed-top">
     <div class="container-fluid">
@@ -94,6 +94,7 @@
                         {%endfor%}
                         
                         <a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+
                     </div>
                 </div>
             {%endfor%}

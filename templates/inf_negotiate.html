@@ -63,20 +63,20 @@
 </nav>
 <body>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-    <h1 class="form-label">Influencer negotiation page</h1>
+    <h1 class="form-label">Influencer request page</h1>
     <form method="post">
         <div class="mb-3">
         <label for="inf_id" class="form-label">Enter User Name:</label>
         <input type="text" class="form-control" name="inf_id" id="inf_id" required>
         </div>
         <div class="mb-3">
-            <label for="messages" class="form-label">Enter negotiation request:</label>
+            <label for="messages" class="form-label">Enter request:</label>
             <input type="text" class="form-control" name="messages" id="messages" required>
             </div>
         <button type="submit">Submit</button>
         <div class="chat-box">
             <div class="inner-box">
-                <label for="chat_messages" class="form-label">Chat box:</label>
+                <label for="chat_messages">Chat history:</label>
                 <textarea class="chat-textarea" id="chat_messages" name="messages" readonly>{{ adreq.messages }}</textarea>
             </div>
         </div>

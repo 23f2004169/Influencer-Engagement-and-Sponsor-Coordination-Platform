@@ -27,14 +27,17 @@
         <input type="text" class="form-control" name="inf_name" id="inf_name" required>
         <label for="inf_password" class="form-label white">Enter Influencer password:</label>
         <input type="text" class="form-control" name="inf_password" id="inf_password" required>
-        <label for="inf_category" class="form-label white">Enter Influencer Category:</label>
-        <input type="text" class="form-control" name="inf_category" id="inf_category" >
         <label for="inf_niche" class="form-label white">Enter Influencer Niche:</label>
         <input type="text" class="form-control" name="inf_niche" id="inf_niche" required>
         <label for="inf_reach" class="form-label white">Enter Influencer Reach:</label>
         <input type="integer" class="form-control" name="inf_reach" id="inf_reach" required>
-        <label for="rating" class="form-label white">Enter Influencer Rating:</label>
-        <input type="integer" class="form-control" name="rating" id="rating" required>
+        <label for="inf_category" class="form-label white">Enter Influencer Category:   ( Reach: below 10k => nano, 10k-100k =>micro,100k-1M=>macro,above 1M=>mega)</label>
+        <select class="form-control" name="inf_category" id="inf_category"required>
+            <option value="nano">nano</option>
+            <option value="micro">micro</option>
+            <option value="macro">macro</option>
+            <option value="mega">mega</option>
+        </select>   
         <label for="inf_image" class="form-label white">Upload Influencer Image:</label>
         <input type="file" class="form-control" name="inf_image" id="inf_image">
 

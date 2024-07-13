@@ -2,6 +2,8 @@ from flask import current_app as app
 from application.models import *
 from flask import request
 
+#CAMPAIGN MANAGEMENT: READ,DELETE,UPDATE AND CREATE 
+
 @app.route("/api_read_camp",methods=["GET"])
 def api_read_camp():
     return{"data":[camp.to_json() for camp in Campaign.query.all()]},200
@@ -38,7 +40,6 @@ def api_update_camp():
     db.session.commit()
     return {"message":"campaign updation successful"}, 201
 
-
 @app.route("/api_create_camp",methods=["POST"])
 def api_create_camp():
     data=request.get_json()
@@ -53,6 +54,10 @@ def api_create_camp():
     db.session.add(new_camp)
     db.session.commit()
     return {"message":"campaign creation successful"}, 201
+
+
+
+#AD MANAGEMENT: READ,DELETE,UPDATE AND CREATE 
 
 @app.route("/api_read_ad",methods=["GET"])
 def api_read_ad():

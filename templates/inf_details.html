@@ -11,15 +11,43 @@
     body {padding-top: 20px;background-color:rgb(34, 23, 59);}
     .white{color:white}
     h1, h2 {margin-top: 50px;}
-    table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
+    table {margin-top: 10px;}.form-container {margin-top: 50px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
     .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
     .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+    .container {
+            background-color: #ffffff; 
+            border: 1px solid #ccc; 
+            padding: 30px;
+            max-width: 700px; /* Set a maximum width for the container */
+            margin: 20px auto; /* Center the container and add space around it */
+            text-align: center; /* Center-align text and inline elements */
+
+        } /* marginbottom mb margintop mt */
+    
+        .container h1 {
+            font-size: 2rem; /* Larger heading */
+            margin-bottom: 20px; /* Space below heading */
+            margin-top:10px
+        }
+    
+        .detail {
+            margin-bottom: 10px; /* Space between detail items */
+        }
+    
+        .detail strong {
+            display: inline-block;
+            width: 150px;
+            margin-right: 10px; /* Space between label and value */
+        }
+        .small-image { width: 30%; 
+            height: 40%;} 
 </style>
         
 <body>      
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" >ADMIN DASHBOARD</a>
+            <a href="/admin_dashboard"><button class="btn btn-secondary">Home</button></a>
             <a href="/ongoing_camp"><button class="btn btn-secondary">ONGOING CAMPAIGNS</button></a>
             <a href="{{url_for('adminsearch', search_type='common')}}"><button class="btn btn-secondary">Search</button></a>
             <a href="/admin_summary"><button class="btn btn-secondary">STATISTICS</button></a>
@@ -59,30 +87,10 @@
             </div>
         </div>
     </nav>
-   
+
 <body>
-    <style>
-        .container {
-            background-color: #ffffff; 
-            border: 1px solid #ccc; 
-            padding: 20px;
-        }
-    
-        .container h1 {
-            font-size: 2rem; /* Larger heading */
-            margin-bottom: 20px; /* Space below heading */
-        }
-    
-        .detail {
-            margin-bottom: 10px; /* Space between detail items */
-        }
-    
-        .detail strong {
-            margin-right: 10px; /* Space between label and value */
-        }
-    </style>
-    <div class="container mt-5">
-        <h1 class="mb-4">Influencer Details</h1>
+    <div class="container mt-5">    
+        <h1 class="mb-3">Influencer Details</h1>
         <div class="detail"><strong>Influencer ID:</strong> {{inf.inf_id}}</div>
         <div class="detail"><strong>Influencer Name:</strong> {{inf.inf_name}}</div>
         <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="" class="small-image">

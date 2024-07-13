@@ -32,12 +32,20 @@
         border-radius: 8px;
         padding: 20px;
         margin: 20px;
-        box-shadow: 0 0 10px rgba(52, 46, 46, 0.1); /* Optional: Adds a subtle shadow */
     }
     .white{
         color:white
     }
-
+    .small-image { width: 50%; 
+        height: auto;}
+    .card-container {display: flex;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line */
+            justify-content: space-between; /* Distribute space between cards */}
+    .card {width: 18rem;
+            margin-bottom: 20px; /* Adjust spacing between rows */
+            margin-right: 20px; /* Adjust spacing between columns */}
+    .card-body {
+            text-align: center; /* Center align content */}
     </style>
    
    <nav class="navbar bg-body-tertiary fixed-top">
@@ -50,22 +58,24 @@
         <a href="{{url_for('inf_summary',inf_id=inf.inf_id)}}"><button class="btn btn-secondary">STATS</button></a>
         <a href="/inf_login"><button class="btn btn-danger">Logout</button></a>
     </nav>
-    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+    <div style="margin-top: 1%; margin-left: 5%; margin-right: 5%;">
         <h1 class="white">Search Campaign results</h1>
-        <div class="card" style="width: 18rem;">
+        <div class="card-container" style="margin-top:0.1%;">
             {%for i in sresult%}
-                {%if i.visibility=='public'%}
-                <div class="card" style="width: 18rem;">
-                <div class="card-body">
+                {%if i.visibility=='public' and i.flagged==0%}
+                <div class="card" style=" margin-top:0.1%;">
+                    <div class="card-body" >
                         <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
+                        <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="picture" class="small-image">
                         <p class="card-text"></p>{{i.niche}}</p>
                         <p class="card-text"></p>{{i.description}}</p>
                         <p class="card-text"></p>{{i.budget}}</p>
                         {% for ad in i.camp_ads %}
-                            <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-info" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+                        <div class="card-body" style="margin-top:0.1%; margin-left:0.1%; margin-right:0.1%;">
+                                <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
+                        </div>
                         {%endfor%}
-                        
-                        <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View campaign details</a>
+                        <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-secondary" type="button">View campaign details</a>
                 </div>
                 </div>
                 {%endif%}

@@ -107,6 +107,7 @@
         <div class="detail"><strong>Description:</strong> {{camp.description}}</div>
         <div class="detail"><strong>Flagged:</strong> {{camp.flagged}}</div>
         <a href="{{url_for('rembudget',camp_id=camp.camp_id,spon_id=spon.spon_id) }}"><button class="btn btn-primary">Remaining budget {{rem}}</button></a>
+        <a href="{{url_for('create_ad',spon_id=spon.spon_id) }}"><button id='req' class="btn btn-primary" type="button">Create Ad request</button></a>
 
     </div>
     
