@@ -30,7 +30,7 @@
             height: auto;}
         .white{color:white}
     </style>
-    <nav class="navbar bg-body-tertiary fixed-top">
+       <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">SPONSOR DASHBOARD</a>
             <a href="{{url_for('spon_dashboard',spon_id=spon.spon_id) }}"><button class="btn btn-secondary" type="button">Home</button></a>
@@ -48,20 +48,34 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{{url_for('spon_dashboard',spon_id=spon.spon_id) }}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">CAMPAIGN MANAGEMENT</a>
                             <ul class="dropdown-menu">
+                            {% if spon.flagged == 0 %}
                                 <li><a class="dropdown-item" href="{{url_for('create_camp',spon_id=spon.spon_id) }}">Create campaigns</a></li>
                                 <li><a class="dropdown-item" href="{{url_for('delete_camp',spon_id=spon.spon_id) }}">Delete campaigns</a></li>
                                 <li><a class="dropdown-item" href="{{url_for('update_camp',spon_id=spon.spon_id) }}"> Update campaigns</a></li>
+                            {%else%}
+                                <button type="button" class="m-3 btn btn-primary" disabled>Create campaigns</button>
+                                <button type="button" class="m-3 btn btn-primary" disabled>Delete campaigns</button>
+                                <button type="button" class="m-3 btn btn-primary" disabled>Update campaigns</button>
+
+                            {% endif %}
                             </ul>
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">AD MANAGEMENT</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{url_for('create_ad',spon_id=spon.spon_id) }}">Create Ad-request</a></li>
-                                <li><a class="dropdown-item" href="{{url_for('delete_ad',spon_id=spon.spon_id) }}">Delete Ad-request</a></li>
-                                <li><a class="dropdown-item" href="{{url_for('update_ad',spon_id=spon.spon_id) }}"> Update Ad-request</a></li>
+                            {% if spon.flagged == 0 %}
+                                <li><a class="dropdown-item m-3 " href="{{url_for('create_ad',spon_id=spon.spon_id) }}">Create Ad-request</a></li>
+                                <li><a class="dropdown-item m-3 " href="{{url_for('delete_ad',spon_id=spon.spon_id) }}">Delete Ad-request</a></li>
+                                <li><a class="dropdown-item m-3 " href="{{url_for('update_ad',spon_id=spon.spon_id) }}"> Update Ad-request</a></li>
+                            {%else%}
+                                <button type="button" class="m-3 btn btn-primary" disabled>Create Ad-request</button>
+                                <button type="button" class="m-3 btn btn-primary" disabled>Delete Ad-request</button>
+                                <button type="button" class="m-3 btn btn-primary" disabled>Update Ad-request</button>
+
+                            {% endif %}
                             </ul>
                         </li>
                         
@@ -95,6 +109,8 @@
         }
     </style>
 <body>
+
+   
     <div class="container mt-5">
         <h1 class="mb-4">Campaign Details</h1>
         <div class="detail"><strong>Campaign ID:</strong> {{camp.camp_id}}</div>
@@ -107,7 +123,13 @@
         <div class="detail"><strong>Description:</strong> {{camp.description}}</div>
         <div class="detail"><strong>Flagged:</strong> {{camp.flagged}}</div>
         <a href="{{url_for('rembudget',camp_id=camp.camp_id,spon_id=spon.spon_id) }}"><button class="btn btn-primary">Remaining budget {{rem}}</button></a>
-        <a href="{{url_for('create_ad',spon_id=spon.spon_id) }}"><button id='req' class="btn btn-primary" type="button">Create Ad request</button></a>
+
+        {% if spon.flagged == 0 %}
+        <a href="{{url_for('create_ad',spon_id=spon.spon_id) }}"><button class="btn btn-primary">Create Ad-request</button></a>
+        {%else%}
+            <button type="button" class="m-3 btn btn-primary" disabled>Create Ad-request</button>
+    
+        {% endif %}
 
     </div>
     

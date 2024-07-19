@@ -56,9 +56,13 @@
             height: auto;}
     </style>
 </head>
+
 <body>
     <div class="profile-container">
         <h1>Welcome {{ inf.inf_name }}</h1>
+        {% if inf.flagged == 1 %}
+         <h5 >You have been flagged. Contact admin for assistance at support@iescp.in </h5>
+        {%endif%}
         <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="profile" class=" small-image">
         <h3>Rating: {{ inf.rating }}</h3>
         <h3>Reach: {{ inf.inf_reach }}</h3>

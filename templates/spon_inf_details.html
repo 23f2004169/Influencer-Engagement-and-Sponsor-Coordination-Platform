@@ -8,25 +8,41 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"crossorigin="anonymous"></script>
 </head>
 <body>
-    <style>
+       <style>
         body {padding-top: 20px;background-color:rgb(34, 23, 59);}
-           h1, h2 {margin-top: 20px;}
-           table {margin-top: 20px;}.form-container {margin-top: 30px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
-           .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
-           .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
-           .white{color:white}
-        .card-container {display: flex;
-            flex-wrap: wrap; /* Allow cards to wrap to the next line */
-            justify-content: space-between; /* Distribute space between cards */}
-        .card {width: 18rem;
-            margin-bottom: 20px; /* Adjust spacing between rows */
-            margin-right: 20px; /* Adjust spacing between columns */}
-        .card-body {
-            text-align: center; /* Center align content */}
-        .small-image { width: 60%; 
-                height: 50%;}
+        .white{color:white}
+        h1, h2 {margin-top: 50px;}
+        table {margin-top: 10px;}.form-container {margin-top: 50px;}.navbar-brand {font-weight: bold;}.navbar, .offcanvas-header, .offcanvas-body {background-color: #f0f2ec;}
+        .navbar-brand, .nav-link, .offcanvas-title {color: #020b17;}
+        .nav-link.active {font-weight: bold;color: #e98e0f !important;}.btn-primary, .btn-outline-success {margin-top: 10px;}
+        .container {
+                background-color: #ffffff; 
+                border: 1px solid #ccc; 
+                padding: 30px;
+                max-width: 700px; /* Set a maximum width for the container */
+                margin: 20px auto; /* Center the container and add space around it */
+                text-align: center; /* Center-align text and inline elements */
+    
+            } /* marginbottom mb margintop mt */
         
-       </style>
+            .container h1 {
+                font-size: 2rem; /* Larger heading */
+                margin-bottom: 20px; /* Space below heading */
+                margin-top:10px
+            }
+        
+            .detail {
+                margin-bottom: 10px; /* Space between detail items */
+            }
+        
+            .detail strong {
+                display: inline-block;
+                width: 150px;
+                margin-right: 10px; /* Space between label and value */
+            }
+            .small-image { width: 30%; 
+                height: 40%;} 
+    </style>
       <nav class="navbar bg-body-tertiary fixed-top">
        <div class="container-fluid">
            <a class="navbar-brand" href="/">SPONSOR DASHBOARD</a>
@@ -71,28 +87,29 @@
            </div>
        </div>
    </nav>
-    <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
-        <h1 class="white">Search Influencer results</h1>
-        <div class="card-container">
-        {%for i in sresult%}
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">{{i.inf_name}}</h5>
-                <h5 class="card-subtitle mb-2 text-body-secondary">ID:{{i.inf_id}}</h5>
-                <img id="image" src="/static/{{ i.inf_id }}.jpeg" alt="picture" class="small-image">
-                <h6 class="card-subtitle mb-2 text-body-secondary">Niche:{{i.inf_niche}}</h6>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Reach:{{i.inf_reach}}</h6>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Rating:{{i.rating}}</h6>
-                {%if i.flagged==0%}
-                    <a href="{{url_for('spon_inf_details',spon_id=spon.spon_id,inf_id=i.inf_id) }}"><button id='rate' class="btn btn-primary" type="button">View</button></a>
-                {%else%}
-                    <button type="button" class="m-3 btn btn-primary"  disabled>Flagged user</button>
-                {%endif%}
-            </div>
-        </div>
-      {% endfor %}
+    
+    
+<body>
+    <div class="container mt-5">    
+        <h1 class="mb-3">Influencer Details</h1>
+        <div class="detail"><strong>Influencer ID:</strong> {{inf.inf_id}}</div>
+        <div class="detail"><strong>Influencer Name:</strong> {{inf.inf_name}}</div>
+        <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="" class="small-image">
+        <div class="detail"><strong>Category:</strong> {{inf.inf_category}}</div>
+        <div class="detail"><strong>Niche:</strong> {{inf.inf_niche}}</div>
+        <div class="detail"><strong>Password:</strong> {{inf.inf_password}}</div>
+        <div class="detail"><strong>Reach:</strong> {{inf.inf_reach}}</div>
+        <div class="detail"><strong>Flagged:</strong> {{inf.flagged}}</div>
+        {%if inf.flagged==0%}
+        {%if rate%}
+        <a href="{{url_for('rate',spon_id=spon.spon_id,inf_id=inf.inf_id) }}"><button id='rate' class="btn btn-primary" type="button">Rate</button></a>
+        {%endif%}
+        <a href="{{url_for('create_ad',spon_id=spon.spon_id) }}"><button id='req' class="btn btn-primary" type="button">Send Ad request</button></a>
+        {%else%}
+        <button type="button" class="m-3 btn btn-primary"  disabled>Flagged user</button>
+        {%endif%}    
     </div>
-    </div>
+ 
     
 </body>
 </html>

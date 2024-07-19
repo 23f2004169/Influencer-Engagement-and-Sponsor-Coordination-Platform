@@ -64,6 +64,9 @@
     </style>
 </head>
 <div style="margin-top:1%; margin-left: 5%; margin-right: 5%">
+    {% if inf.flagged == 1 %}
+         <h5 class="white">You have been flagged. Contact admin for assistance at support@iescp.in </h5>
+    {%else%}
     <h1 class="white">Update Campaign progress</h1>
     <div class="card-container">
     {%for i in camps%}
@@ -74,7 +77,12 @@
             <label for="camp_name"><strong>{{i.camp_name}}</strong></label>
             <img id="image" src="/static/{{i.camp_id}}.jpeg" alt="" class="small-image">
             <div>
-            <label for="progress">Current Progress percentage of campaign:</label>
+                {% for ad in i.camp_ads %}
+                        {%if ad.status=="accepted"%}
+                        <a href="{{ url_for('inf_ad_details', adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-success" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                        {%endif%}
+                    {% endfor %}
+            <label for="progress"><b>Current Progress percentage of campaign:</b></label>
             <input type="text" class="form-control" id="progress" value="{{i.progress}}" name="progress" > 
             </div>
             <input type="number" value="{{i.camp_id}}" readonly hidden name="camp_id"> 
@@ -85,6 +93,7 @@
     </div>
     {% endfor %}
     </div>
+    {%endif%}
 </div>
 </body>
 </html>

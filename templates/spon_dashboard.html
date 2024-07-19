@@ -31,7 +31,7 @@
         .white{color:white}
     </style>
     <img id="image" src="/static/{{spon.spon_id}}.jpeg" alt="" class="top ">
-    <h1 class="white">Welcome {{spon.spon_name}}</h1>
+    <h1 class="white"><b>Welcome {{spon.spon_name}}</b></h1>
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">SPONSOR DASHBOARD</a>
@@ -56,16 +56,15 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">CAMPAIGN MANAGEMENT</a>
                             <ul class="dropdown-menu">
                             {% if spon.flagged == 0 %}
-                                <li><a class="dropdown-item" href="{{url_for('create_camp',spon_id=spon.spon_id) }}">Create campaigns</a></li>
-                                <li><a class="dropdown-item" href="{{url_for('delete_camp',spon_id=spon.spon_id) }}">Delete campaigns</a></li>
-                                <li><a class="dropdown-item" href="{{url_for('update_camp',spon_id=spon.spon_id) }}"> Update campaigns</a></li>
+                                <li><a class="dropdown-item m-3" href="{{url_for('create_camp',spon_id=spon.spon_id) }}">Create campaigns</a></li>
+                                <li><a class="dropdown-item m-3" href="{{url_for('delete_camp',spon_id=spon.spon_id) }}">Delete campaigns</a></li>
+                                <li><a class="dropdown-item m-3" href="{{url_for('update_camp',spon_id=spon.spon_id) }}"> Update campaigns</a></li>
                             {%else%}
                                 <button type="button" class="m-3 btn btn-primary" disabled>Create campaigns</button>
                                 <button type="button" class="m-3 btn btn-primary" disabled>Delete campaigns</button>
                                 <button type="button" class="m-3 btn btn-primary" disabled>Update campaigns</button>
-
                             {% endif %}
-                            </ul>
+                            </ul>    
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">AD MANAGEMENT</a>
                             <ul class="dropdown-menu">
                             {% if spon.flagged == 0 %}
@@ -90,7 +89,10 @@
             </div>
         </div>
     </nav>
-    
+    {% if spon.flagged == 1 %}
+    <h5 class="white">You have been flagged. Contact admin for assistance at support@iescp.in </h5>
+    {%endif%}
+   
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
     <h3 class="white">Ongoing Campaigns sponsored by you</h3>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
@@ -100,11 +102,15 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ i.camp_id }}: {{ i.camp_name }}</h5>
                     <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="" class="small-image">
-                    <p class="card-text">{{ i.description }}</p>
+                    <p class="card-text">progress:{{ i.progress}}%</p>
                     {% for ad in i.camp_ads %}
-                    <div class="card-body" style="margin-top:0.1%; margin-left:0.1%; margin-right:0.1%;">
-                    <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id, spon_id=spon.spon_id) }}" class="btn btn-secondary" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.adreq_name }}</a>
-                    </div>
+                        {%if ad.status=="pending"%}
+                        <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-secondary" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.adreq_name}}</a>
+                        {%elif ad.status=="accepted"%}
+                        <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-success" style="border: 1px solid white;"  type="button">Ad no- {{ ad.adreq_id }}: {{ ad.adreq_name}}</a>
+                        {%elif ad.status=="rejected"%}
+                        <a href="{{ url_for('spon_ad_details', adreq_id=ad.adreq_id,spon_id=spon.spon_id) }}" class="btn btn-danger" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.adreq_name}}</a>
+                        {%endif%}
                     {% endfor %}
                     <a href="{{ url_for('spon_camp_details', camp_id=i.camp_id, spon_id=spon.spon_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                 </div>
@@ -113,5 +119,6 @@
         </div>
     </div>
     
+                    
 </body>
 </html>

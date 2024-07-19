@@ -79,7 +79,7 @@
 
     /* Styling for the table */
     table {
-        width: 80%;
+        width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
     }
@@ -114,6 +114,8 @@
             <th>Description</th>
             <th>Flagged</th>
             <th>Sponsor id</th>
+            <th>Niche</th>
+            <th>Progress</th>
             <th></th>
 
         </tr>
@@ -129,6 +131,8 @@
                 <td>{{i.description}}</td>
                 <td>{{i.flagged}}</td>
                 <td>{{i.spon_id}}</td>
+                <td>{{i.niche}}</td>
+                <td>{{i.progress}}</td>
                 <td><a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View</a></td>
             </tr>
         {%endfor%}

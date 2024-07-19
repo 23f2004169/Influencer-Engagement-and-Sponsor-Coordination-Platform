@@ -71,34 +71,8 @@
         </div>
     </nav>
    
-  
-        <h1 class="white">Welcome Admin</h1>
-
+   <h1 class="white">Welcome Admin</h1>
         <div class="container mt-5">
-            <h2 class="white">Flagged Campaigns:</h2>
-            <div class="card-container">
-            <div class="row">
-                {%for i in camp%}
-                    {% if i.flagged == 1 %}
-                    <div class="col-md-6 campaign-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Campaign id:{{i.camp_id}}</h5>
-                                <h5>Campaign Name:{{i.camp_name}}</h5>
-                                <img id="image" src="/static/{{i.camp_id}}.jpeg" alt="" class="small-image ">
-                                <div>
-                                <a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View</a>
-                                <a href="{{url_for('del_camp', camp_id=i.camp_id) }}" class="btn btn-danger" type="button">Remove</a>
-                                </div>
-                            </div>            
-                        </div>
-                    </div>
-                    {% endif %}
-                {%endfor%}    
-            </div>
-           
-            </div>            
-            
                 <h2 class="white">Flagged Influencers:</h2>
                 <div class="card-container">
                 <div class="row">
@@ -140,9 +114,32 @@
                                 </div>            
                             </div>
                         </div>
-                {% endif %}
-            {%endfor%}     
-        </div>
+                        {% endif %}
+                    {%endfor%}     
+                    </div>
+                </div>
+                <h2 class="white">Flagged Campaigns:</h2>
+                <div class="card-container">
+                <div class="row">
+                    {%for i in camp%}
+                        {% if i.flagged == 1 %}
+                        <div class="col-md-6 campaign-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Campaign id:{{i.camp_id}}</h5>
+                                    <h5>Campaign Name:{{i.camp_name}}</h5>
+                                    <img id="image" src="/static/{{i.camp_id}}.jpeg" alt="" class="small-image ">
+                                    <div>
+                                    <a href="{{url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View</a>
+                                    <a href="{{url_for('del_camp', camp_id=i.camp_id) }}" class="btn btn-danger" type="button">Remove</a>
+                                    </div>
+                                </div>            
+                            </div>
+                        </div>
+                        {% endif %}
+                    {%endfor%}    
+                </div>
+                </div>
         </div>
 </body>
 </html>

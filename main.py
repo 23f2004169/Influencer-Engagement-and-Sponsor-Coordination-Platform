@@ -6,14 +6,14 @@ from application.database import db
 cwd=os.getcwd()
 basedir=os.path.abspath(os.path.dirname(__file__))
 
-#creates app instance
+#creates app instance -object of flask
 app=Flask(__name__)
 db_path=os.path.join(basedir,"database_files/Infspons_db.db")
 
 app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///"+db_path
-db.init_app(app=app)
+db.init_app(app=app) #object.method(parameter)
 
-#pushing app context globally to flask class file app -direct access of app for other modules
+#pushing app context globally to flask class file app -direct access of app for other modules(db)
 app.app_context().push()
 
 from application.controllers import *

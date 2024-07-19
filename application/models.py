@@ -17,7 +17,7 @@ class Influencer(db.Model):
     rating=db.Column(db.Numeric(1,1),default=0)
     inf_num_rating=db.Column(db.Integer, default=0)
     inf_total_rating=db.Column(db.Numeric, default=0)
-    inf_req=db.relationship('Adrequest')
+    inf_req=db.relationship('Adrequest',cascade='all, delete-orphan')
     def to_json(self):
         return{"inf_id":self.inf_id,"inf_name":self.inf_name,"inf_password":self.inf_password,"inf_category":self.inf_category,"inf_niche":self.inf_niche,"inf_reach":self.inf_reach,"flagged":self.flagged,"rating":self.rating,"inf_num_rating":self.inf_num_rating,"inf_total_rating":self.inf_total_rating,"inf_req":[ad.to_json() for ad in self.inf_req]}
 
@@ -29,7 +29,7 @@ class Sponsor(db.Model):
     spon_budget=db.Column(db.Integer,nullable=False)
     spon_industry=db.Column(db.String,nullable=False)
     flagged=db.Column(db.Integer, default=0)
-    spon_camp=db.relationship('Campaign')
+    spon_camp=db.relationship('Campaign',cascade='all, delete-orphan')
     def to_json(self):
         return{"spon_id":self.spon_id,"spon_name":self.spon_name,"spon_password":self.spon_password,"spon_budget":self.spon_budget,"spon_industry":self.spon_industry,"flagged":self.flagged,"spon_camp":[camp.to_json() for camp in self.spon_camp]}
 
@@ -60,7 +60,7 @@ class Campaign(db.Model):
     flagged=db.Column(db.Integer, default=0)
     niche=db.Column(db.String)
     progress=db.Column(db.Integer,default=0)
-    camp_ads=db.relationship("Adrequest")
+    camp_ads=db.relationship("Adrequest",cascade='all, delete-orphan')
     def to_json(self):
         return{"camp_id":self. camp_id,"spon_id":self.spon_id,"camp_name":self.camp_name,"start_date":self.start_date,"end_date":self.end_date,"budget":self.budget,"goals":self.goals,"visibility":self.visibility,"description":self.description,"niche":self.niche,"progress":self.progress,"flagged":self.flagged,"camp_ads":[ad.to_json() for ad in self.camp_ads]}
 

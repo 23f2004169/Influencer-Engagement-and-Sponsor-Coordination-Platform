@@ -86,8 +86,15 @@
                     <h5 class="card-title">{{ i.camp_id }}: {{ i.camp_name }}</h5>
                     <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="" class="small-image">
                     <p class="card-text">{{ i.description }}</p>
+                    <p class="card-text"><b>Campaign progress:{{ i.progress }}%</b></p>
                     {% for ad in i.camp_ads %}
-                    <a href="{{ url_for('ad_details', adreq_id=ad.adreq_id) }}" class="btn btn-secondary" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                        {%if ad.status=="pending"%}
+                        <a href="{{ url_for('ad_details', adreq_id=ad.adreq_id) }}" class="btn btn-secondary" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                        {%elif ad.status=="accepted"%}
+                        <a href="{{ url_for('ad_details', adreq_id=ad.adreq_id) }}" class="btn btn-success" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                        {%elif ad.status=="rejected"%}
+                        <a href="{{ url_for('ad_details', adreq_id=ad.adreq_id) }}" class="btn btn-danger" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                        {%endif%}
                     {% endfor %}
                     <a href="{{ url_for('camp_details', camp_id=i.camp_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                 </div>

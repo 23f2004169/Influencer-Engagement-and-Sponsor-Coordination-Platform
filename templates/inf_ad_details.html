@@ -59,9 +59,9 @@
         <div class="detail"><strong>Requirements:</strong> {{adreq.requirements}}</div>
         <div class="detail"><strong>Payment amount:</strong> {{adreq.pay_amount}}</div>
         {% if inf.flagged == 0 %}
-        <a href="{{url_for('negotiate', adreq_id=adreq.adreq_id,inf_id=inf.inf_id)}}" class="btn btn-primary" type="button">Send request message</a>
+        <a href="{{url_for('negotiate', adreq_id=adreq.adreq_id,inf_id=inf.inf_id)}}" class="btn btn-primary" type="button">Send message</a>
         {%else%}
-        <button type="button" class="m-3 btn btn-primary" disabled>Send request message</button>
+        <button type="button" class="m-3 btn btn-primary" disabled>Send message</button>
         {% endif %}
     </div>
     

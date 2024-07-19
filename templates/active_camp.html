@@ -47,6 +47,9 @@
     <!--convert text to datetime and compare with current date-->    
     <h2 class="white">Active Public campaigns</h2>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
+        {% if inf.flagged == 1 %}
+         <h5 class="white">You have been flagged. Contact admin for assistance at support@iescp.in </h5>
+        {%else%}
             <div class="card-container">
             {% for i in camp%}
                 <div class="card"  >
@@ -56,7 +59,7 @@
                         <p class="card-text"></p>progress: {{i.progress}}%</p>
                         <p class="card-text"></p>{{i.description}}</p>
                            {% for ad in i.camp_ads %}
-                           {%if ad.status=='pending'%}
+                           {%if ad.status=='pending' or ad.status=='rejected'%}
                            <div class="card-body" style="margin-top:0.1%; margin-left:0.1%; margin-right:0.1%;">
                             <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Ad no- {{ad.adreq_id}}:{{ad.adreq_name}}</a>
                            </div>
@@ -68,6 +71,8 @@
                 </div>
             {%endfor%}
             </div>
+         {%endif%}
+
     </div>
 </body>
 </html>

@@ -3,6 +3,7 @@ from flask import render_template,url_for,redirect,request
 from application.models import *
 from datetime import datetime,date
 import decimal
+#stats
 import matplotlib
 matplotlib.use('Agg')  # Use a non-interactive backend
 import matplotlib.pyplot as plt
@@ -11,6 +12,8 @@ import numpy as np
 logged_admin=None
 logged_inf=None
 logged_spon=None
+
+
 
 #ADMIN
 
@@ -102,7 +105,9 @@ def camp_flag(camp_id):
 def spon_flag(spon_id):
     s=Sponsor.query.get(spon_id)
     s.flagged= not s.flagged
-    db.session.commit()
+    if s.flagged==1:
+        for i in s.spon_camp:
+            i.flagged= 1
     return render_template('spon_details.html',spon=s)
 
 @app.route("/influencer/<inf_id>/flag",methods=["GET","POST"])
@@ -209,8 +214,9 @@ def admin_summary():
             adpend+=1
     plt.title('Ad request status')
     y = np.array([adacpt,adrej,adpend])
+    colors = ['#4CAF50', '#F44336', '#FFEB3B']
     mylabels1= ["Accepted", "Rejected", "Pending"]
-    plt.pie(y, labels = mylabels1,autopct='%1.1f%%')
+    plt.pie(y, labels = mylabels1,autopct='%1.1f%%',colors=colors)
     plt.savefig('static/ad_status.png')
     plt.close()
 
@@ -269,6 +275,7 @@ def admin_summary():
 
 
 #INFLUENCER
+
 
 @app.route('/inf_reg', methods=['GET','POST'])
 def inf_reg():
@@ -393,17 +400,6 @@ def inf_adreject(adreq_id,inf_id):
             newlist.append(x)
     return render_template("new_adreq.html",inf=inf,adreq=newlist)
 
-@app.route('/influencer/<inf_id>/earnings',methods=["GET"])
-def earnings(inf_id):
-    earned=0
-    ads=Adrequest.query.all()
-    inf=Influencer.query.get(inf_id)
-    for x in inf.inf_req:
-        if x.status=="accepted":            
-            earned+=x.pay_amount
-        print(earned)
-    return render_template("inf_dashboard.html",inf=inf,adreq=ads,earned=earned)
-
 @app.route('/influencer/<inf_id>/<adreq_id>/negotiate',methods=["GET","POST"])
 def negotiate(inf_id,adreq_id):
     newlist=[]    
@@ -422,6 +418,17 @@ def negotiate(inf_id,adreq_id):
             if x.status=="pending":
                 newlist.append(x)
         return render_template("inf_dashboard.html",inf=inf)
+
+@app.route('/influencer/<inf_id>/earnings',methods=["GET"])
+def earnings(inf_id):
+    earned=0
+    ads=Adrequest.query.all()
+    inf=Influencer.query.get(inf_id)
+    for x in inf.inf_req:
+        if x.status=="accepted":            
+            earned+=x.pay_amount
+        print(earned)
+    return render_template("inf_dashboard.html",inf=inf,adreq=ads,earned=earned)
 
 @app.route('/influencer/<inf_id>/progress',methods=["GET","POST"])
 def progress(inf_id):
@@ -520,7 +527,10 @@ def inf_summary(inf_id):
         mylabels1= ["Accepted", "Rejected", "Pending"]
         colors = ['#4CAF50', '#F44336', '#FFEB3B']
         plt.title('Ad request status')
-        plt.pie(y, labels = mylabels1,autopct='%1.1f%%',colors=colors)
+        total = sum(y)
+        autopct = lambda pct: f'{int(round(pct * total / 100.0))}'
+        plt.pie(y, labels=mylabels1, autopct=autopct, colors=colors)
+        #plt.pie(y, labels = mylabels1,autopct='%1.1f%%',colors=colors)
         plt.savefig('static/i_ad_status.png')
         plt.close()
 
@@ -550,6 +560,7 @@ def inf_summary(inf_id):
         plt.savefig('static/i_campaign_progress.png')
         plt.close()
     return render_template("inf_summary.html",inf=inf,spons=spons,infs=infs,camps=camps,ads=ads,cname=cname,cprog=cprog,adpend=adpend,adrej=adrej,adacpt=adacpt)
+
 
 
 
@@ -713,7 +724,13 @@ def create_ad(spon_id):
         return redirect(url_for("spon_login"))
     if request.method=="GET":
         spon=Sponsor.query.get(spon_id)
-        return render_template("create_ad.html",spon=spon)
+        infs=[]
+        for c in spon.spon_camp:
+            for ad in c.camp_ads:
+                infs.append(ad.inf_id)
+        infs=set(infs)
+        infs=list(infs)
+        return render_template("create_ad.html",spon=spon,infs=infs)
     if request.method=="POST":
         adreq_name=request.form.get("adreq_name")
         camp_id=request.form.get("camp_id")
@@ -850,6 +867,24 @@ def rate(inf_id,spon_id):
         db.session.commit()
         return redirect(url_for("spon_dashboard",spon_id=spon_id))
 
+@app.route('/sponsor/<inf_id>/<spon_id>/infdetails',methods=["GET"])
+def spon_inf_details(spon_id,inf_id):
+    spon=Sponsor.query.get(spon_id)
+    inf=Influencer.query.get(inf_id)
+    rate=None
+    camps=[]
+    for i in inf.inf_req:
+        if i.status=="accepted":
+            camps.append(i.camp_id)
+    uniquecamps=set(camps)
+    lcamp=list(uniquecamps)
+    for i in lcamp:
+        c=Campaign.query.get(i)
+        if c.progress==100:
+            rate=True
+            break
+    return render_template("spon_inf_details.html",spon=spon,inf=inf,rate=rate)
+
 @app.route('/campaign/<camp_id>/<spon_id>/rembudget',methods=["GET"])
 def rembudget(camp_id,spon_id):
     rem=0
@@ -912,7 +947,7 @@ def spon_summary(spon_id):
         cprog.append(camp.progress)
     x_labels = cname
     y_values = cprog
-    '''fig, ax = plt.subplots() #remove white bg
+    '''fig, ax = plt.subplots() # to remove white bg
     fig.patch.set_alpha(0.0)
     ax.patch.set_alpha(0.0)'''
     if cname!=[] and cprog!=[]:
@@ -941,7 +976,11 @@ def spon_summary(spon_id):
         plt.title('Ad request status')
         y = np.array([adacpt,adrej,adpend])
         mylabels1= ["Accepted", "Rejected", "Pending"]
-        plt.pie(y, labels = mylabels1,autopct='%1.1f%%')#percent
+        total = sum(y)
+        colors = ['#4CAF50', '#F44336', '#FFEB3B']
+        autopct = lambda pct: f'{int(round(pct * total / 100.0))}'
+        plt.pie(y, labels=mylabels1, autopct=autopct, colors=colors)
+        #plt.pie(y, labels = mylabels1,autopct='%1.1f%%')#percent
         plt.savefig('static/s_ad_status.png')
         plt.close()
     
@@ -962,7 +1001,6 @@ def spon_summary(spon_id):
 
 
 
-#Ability to negotiate the “payment_amount” for a particular ad
 
 
 

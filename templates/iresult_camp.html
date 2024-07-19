@@ -67,17 +67,21 @@
                     <div class="card-body" >
                         <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
                         <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="picture" class="small-image">
-                        <p class="card-text"></p>{{i.niche}}</p>
-                        <p class="card-text"></p>{{i.description}}</p>
-                        <p class="card-text"></p>{{i.budget}}</p>
+                        <p class="card-text"><b>Niche: {{i.niche}}</b></p>
+                        <p class="card-text"><b>Goal: {{i.goals}}</b></p>
+                        <p class="card-text"><b>Budget: {{i.budget}}</b></p>
+                        <p class="card-text"><b>From {{i.start_date}} to {{i.end_date}}</b></p>
                         {% for ad in i.camp_ads %}
+                        {%if ad.status=="pending"%}
                         <div class="card-body" style="margin-top:0.1%; margin-left:0.1%; margin-right:0.1%;">
                                 <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Ad no- {{ad.adreq_id}}:{{ad.requirements}}</a>
                         </div>
+                        {%endif%}
                         {%endfor%}
                         <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-secondary" type="button">View campaign details</a>
                 </div>
                 </div>
+                
                 {%endif%}
 
             {%endfor%}

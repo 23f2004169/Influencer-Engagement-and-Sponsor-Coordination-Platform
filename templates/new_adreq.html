@@ -73,11 +73,14 @@
     </nav>
     
     <h2 class="white"> New Ad requests </h2>
+    {% if inf.flagged == 1 %}
+         <h5 class="white">You have been flagged. Contact admin for assistance at support@iescp.in </h5>
+    {%else%}
     <table  id="new_adreq">
         <tr>
             <th>Adrequest id</th>
             <th>Campaign id</th>
-            <th>Influencer id</th>
+            <th>Name</th>
             <th>Status</th>
             <th>Payment amount</th>
             <th></th>
@@ -90,7 +93,7 @@
             <tr>
                 <td>{{i.adreq_id}}</td>
                 <td>{{i.camp_id}}</td>
-                <td>{{i.inf_id}}</td>
+                <td>{{i.adreq_name}}</td>
                 <td>{{i.status}}</td>
                 <td>{{i.pay_amount}}</td>
                 <td><a href="{{url_for('inf_ad_details',adreq_id=i.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View</a></td>
@@ -100,7 +103,7 @@
             </tr>
         {%endfor%}
     </table>
-   
+    {%endif%}
     
 </body>
 </html>
