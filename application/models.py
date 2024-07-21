@@ -37,7 +37,7 @@ class Adrequest(db.Model):
     __tablename__="adrequest"
     adreq_id=db.Column(db.Integer,primary_key=True,nullable=False)
     adreq_name=db.Column(db.String,nullable=False)
-    inf_id=db.Column(db.Integer,db.ForeignKey("influencer.inf_id"),nullable=False)
+    inf_id=db.Column(db.String,db.ForeignKey("influencer.inf_id"),nullable=False)
     camp_id=db.Column(db.Integer,db.ForeignKey("campaign.camp_id"),nullable=False)
     messages=db.Column(db.String,default=" ")
     requirements=db.Column(db.String)
@@ -49,7 +49,7 @@ class Adrequest(db.Model):
 class Campaign(db.Model):
     __tablename__="campaign"
     camp_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
-    spon_id=db.Column(db.Integer,db.ForeignKey("sponsor.spon_id"),nullable=False)
+    spon_id=db.Column(db.String,db.ForeignKey("sponsor.spon_id"),nullable=False)
     camp_name=db.Column(db.String,nullable=False)
     start_date=db.Column(db.String,nullable=False)
     end_date=db.Column(db.String,nullable=False)
@@ -60,9 +60,10 @@ class Campaign(db.Model):
     flagged=db.Column(db.Integer, default=0)
     niche=db.Column(db.String)
     progress=db.Column(db.Integer,default=0)
+    request=db.Column(db.String,default=" ")
     camp_ads=db.relationship("Adrequest",cascade='all, delete-orphan')
     def to_json(self):
-        return{"camp_id":self. camp_id,"spon_id":self.spon_id,"camp_name":self.camp_name,"start_date":self.start_date,"end_date":self.end_date,"budget":self.budget,"goals":self.goals,"visibility":self.visibility,"description":self.description,"niche":self.niche,"progress":self.progress,"flagged":self.flagged,"camp_ads":[ad.to_json() for ad in self.camp_ads]}
+        return{"camp_id":self. camp_id,"spon_id":self.spon_id,"camp_name":self.camp_name,"start_date":self.start_date,"end_date":self.end_date,"budget":self.budget,"goals":self.goals,"visibility":self.visibility,"description":self.description,"niche":self.niche,"progress":self.progress,"flagged":self.flagged,"request":self.request,"camp_ads":[ad.to_json() for ad in self.camp_ads]}
 
 
 

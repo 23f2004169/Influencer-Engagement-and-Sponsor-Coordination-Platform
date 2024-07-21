@@ -60,6 +60,8 @@
         <div class="detail"><strong>Goals:</strong> {{camp.goals}}</div>
         <div class="detail"><strong>Description:</strong> {{camp.description}}</div>
         <div class="detail"><strong>Flagged:</strong> {{camp.flagged}}</div>
+        <a href="{{url_for('inf_request', camp_id=camp.camp_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Send a request </a>
+
     </div>
     
 </body>

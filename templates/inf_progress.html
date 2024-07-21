@@ -38,7 +38,8 @@
         .small-image {width: 200px; height: auto; }
         .card-container {display: flex;
             flex-wrap: wrap; /* Allow cards to wrap to the next line */
-            justify-content: space-between; /* Distribute space between cards */}
+            justify-content: space-between; /* Distribute space between cards */
+            margin-top: 20px; /* Add space above the container */}
         .card {width: 18rem;
             margin-bottom: 20px; /* Adjust spacing between rows */
             margin-right: 20px; /* Adjust spacing between columns */}
@@ -61,25 +62,30 @@
         .btn {margin-top: 10px;}
         .small-image { width: 50%; 
             height: auto;}
+        .btn-small {
+    padding: 5px 10px;
+    font-size: 12px;
+    border: 1px solid white;
+}
+
     </style>
 </head>
 <div style="margin-top:1%; margin-left: 5%; margin-right: 5%">
     {% if inf.flagged == 1 %}
          <h5 class="white">You have been flagged. Contact admin for assistance at support@iescp.in </h5>
     {%else%}
-    <h1 class="white">Update Campaign progress</h1>
     <div class="card-container">
     {%for i in camps%}
-    <div class="card" style="width: 18rem;">
+    <div class="card">
         <div class="card-body">
         <form method="post">
             <div><h2><strong>Campaign id:{{i.camp_id}}</strong></h2></div>
-            <label for="camp_name"><strong>{{i.camp_name}}</strong></label>
+            <h5 class="card-title">{{i.camp_name}}</h5>
             <img id="image" src="/static/{{i.camp_id}}.jpeg" alt="" class="small-image">
             <div>
                 {% for ad in i.camp_ads %}
                         {%if ad.status=="accepted"%}
-                        <a href="{{ url_for('inf_ad_details', adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-success" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
+                        <a href="{{ url_for('inf_ad_details', adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-success btn-small" style="border: 1px solid white;" type="button">Ad no- {{ ad.adreq_id }}: {{ ad.requirements }}</a>
                         {%endif%}
                     {% endfor %}
             <label for="progress"><b>Current Progress percentage of campaign:</b></label>

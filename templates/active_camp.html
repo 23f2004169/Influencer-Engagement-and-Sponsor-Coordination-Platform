@@ -44,7 +44,6 @@
             height: auto;}
     </style>
 
-    <!--convert text to datetime and compare with current date-->    
     <h2 class="white">Active Public campaigns</h2>
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
         {% if inf.flagged == 1 %}
@@ -58,15 +57,7 @@
                         <img id="image" src="/static/{{ i.camp_id }}.jpeg" alt="picture" class="small-image">
                         <p class="card-text"></p>progress: {{i.progress}}%</p>
                         <p class="card-text"></p>{{i.description}}</p>
-                           {% for ad in i.camp_ads %}
-                           {%if ad.status=='pending' or ad.status=='rejected'%}
-                           <div class="card-body" style="margin-top:0.1%; margin-left:0.1%; margin-right:0.1%;">
-                            <a href="{{url_for('inf_ad_details',adreq_id=ad.adreq_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">Ad no- {{ad.adreq_id}}:{{ad.adreq_name}}</a>
-                           </div>
-                            {%endif%}
-                            {%endfor%}
-                        
-                        <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-secondary" type="button">View campaign details</a>
+                        <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                     </div>
                 </div>
             {%endfor%}

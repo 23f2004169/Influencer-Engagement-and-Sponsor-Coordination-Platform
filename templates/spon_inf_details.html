@@ -97,9 +97,7 @@
         <img id="image" src="/static/{{ inf.inf_id }}.jpeg" alt="" class="small-image">
         <div class="detail"><strong>Category:</strong> {{inf.inf_category}}</div>
         <div class="detail"><strong>Niche:</strong> {{inf.inf_niche}}</div>
-        <div class="detail"><strong>Password:</strong> {{inf.inf_password}}</div>
         <div class="detail"><strong>Reach:</strong> {{inf.inf_reach}}</div>
-        <div class="detail"><strong>Flagged:</strong> {{inf.flagged}}</div>
         {%if inf.flagged==0%}
         {%if rate%}
         <a href="{{url_for('rate',spon_id=spon.spon_id,inf_id=inf.inf_id) }}"><button id='rate' class="btn btn-primary" type="button">Rate</button></a>
