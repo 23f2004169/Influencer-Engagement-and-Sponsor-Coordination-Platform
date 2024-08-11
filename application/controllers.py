@@ -370,12 +370,31 @@ def inf_ad_details(adreq_id,inf_id):
 @app.route("/adrequest/<inf_id>/new_adreq",methods=["GET","POST"])
 def new_adreq(inf_id):
     newlist=[]
+    camplist=[]
+    camp=Campaign.query.all()
     inf=Influencer.query.get(inf_id)
+    for x in camp:
+        start_date=datetime.strptime(x.start_date,'%d-%m-%Y').date()
+        end_date=datetime.strptime(x.end_date,'%d-%m-%Y').date()
+        current_date=datetime.now().date()
+        if start_date<=current_date and  end_date>=current_date:
+            camplist.append(x)
+    print(camplist)
     for x in inf.inf_req:
         if x.status=="pending" and inf.flagged==0:
             newlist.append(x)
-        #print(newlist)
-    return render_template('new_adreq.html',adreq=newlist,inf=inf)
+    print(newlist)
+    last=[]
+    for camp in camplist:
+        for i in camp.camp_ads:
+            print(i)
+            for a in newlist:
+                if a==i:
+                    last.append(a)
+            print(last)
+    print(newlist)
+    print(last)
+    return render_template('new_adreq.html',adreq=last,inf=inf,camp=camplist)
 
 @app.route('/influencer/<adreq_id>/<inf_id>/adaccept',methods=['GET','POST'])
 def inf_adaccept(adreq_id,inf_id):
@@ -736,12 +755,8 @@ def create_ad(spon_id):
         return redirect(url_for("spon_login"))
     if request.method=="GET":
         spon=Sponsor.query.get(spon_id)
-        infs=[]
-        for c in spon.spon_camp:
-            for ad in c.camp_ads:
-                infs.append(ad.inf_id)
-        infs=set(infs)
-        infs=list(infs)
+        infs=Influencer.query.all()
+        print(infs)
         return render_template("create_ad.html",spon=spon,infs=infs)
     if request.method=="POST":
         adreq_name=request.form.get("adreq_name")

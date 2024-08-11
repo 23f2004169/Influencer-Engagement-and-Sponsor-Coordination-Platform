@@ -2,6 +2,58 @@ from flask import current_app as app
 from application.models import *
 from flask import request
 
+@app.route("/api_read_inf",methods=["GET"])
+def api_read_inf():
+    return{"data":[inf.to_json() for inf in Influencer.query.all()]},200
+
+@app.route("/api_delete_inf",methods=["POST"])
+def api_delete_inf():
+    data=request.get_json()
+    inf_id=data["inf_id"]
+    del_inf=Influencer.query.get(inf_id)
+    if del_inf:
+        db.session.delete(del_inf)
+        db.session.commit()
+    return {"message":"deleted successfully "}, 200
+
+@app.route("/api_update_inf",methods=["POST"])
+def api_update_inf():
+    data=request.get_json()
+    inf_category=data["inf_category"]
+    inf_id=data["inf_id"]
+    inf_name=data["inf_name"]
+    inf_reach=int(data["inf_reach"])
+    inf_niche=data["inf_niche"]
+    flagged=data["flagged"]
+    inf_num_rating=data["inf_num_rating"]
+    inf_password=data["inf_password"]
+    update_inf=Influencer.query.get(inf_id)
+    update_inf.inf_name=inf_name       
+    update_inf.flagged=flagged
+    update_inf.inf_niche=inf_niche
+    update_inf.inf_reach=inf_reach
+    update_inf.inf_num_rating=inf_num_rating
+    update_inf.inf_password= inf_password
+    update_inf.inf_category= inf_category
+    db.session.commit()
+    return {"message":"influencer updation successful"}, 201
+
+@app.route("/api_create_inf",methods=["POST"])
+def api_create_inf():
+    data=request.get_json()
+    inf_category=data["inf_category"]
+    inf_id=data["inf_id"]
+    inf_name=data["inf_name"]
+    inf_reach=int(data["inf_reach"])
+    inf_niche=data["inf_niche"]
+    flagged=data["flagged"]
+    inf_num_rating=data["inf_num_rating"]
+    inf_password=data["inf_password"]
+    new_inf=Influencer(inf_name=inf_name,inf_id=inf_id,inf_category=inf_category,inf_reach= inf_reach,inf_niche=inf_niche,flagged=flagged,inf_num_rating=inf_num_rating,inf_password=inf_password)
+    db.session.add(new_inf)
+    db.session.commit()
+    return {"message":"influencer creation successful"}, 201
+
 #CAMPAIGN MANAGEMENT: READ,DELETE,UPDATE AND CREATE 
 
 @app.route("/api_read_camp",methods=["GET"])
@@ -29,6 +81,7 @@ def api_update_camp():
     goals=data["goals"]
     description=data["description"]
     camp_id=int(data["camp_id"])
+    spon_id=data["spon_id"]
     update_camp=Campaign.query.get(camp_id)
     update_camp.camp_name=camp_name       
     update_camp.start_date=start_date
@@ -37,6 +90,7 @@ def api_update_camp():
     update_camp.visibility=visibility
     update_camp.goals= goals
     update_camp.description= description
+    update_camp.spon_id=spon_id
     db.session.commit()
     return {"message":"campaign updation successful"}, 201
 
@@ -50,7 +104,8 @@ def api_create_camp():
     visibility=data["visibility"]
     goals=data["goals"]
     description=data["description"]
-    new_camp=Campaign(camp_name=camp_name,start_date=start_date,end_date=end_date,budget=budget,visibility=visibility,goals=goals,description=description)
+    spon_id=data["spon_id"]
+    new_camp=Campaign(camp_name=camp_name,spon_id=spon_id,start_date=start_date,end_date=end_date,budget=budget,visibility=visibility,goals=goals,description=description)
     db.session.add(new_camp)
     db.session.commit()
     return {"message":"campaign creation successful"}, 201
@@ -118,7 +173,8 @@ def api_create_ad():
     "visibility":"",
     "goals":"",
     "description":"",
-    "camp_id": }'''
+    "camp_id":
+     "spon_id": }'''
 
 '''{
     "adreq_name":"",

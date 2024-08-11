@@ -23,8 +23,42 @@
         .card-body {
             text-align: center; /* Center align content */}
         .white{
-            color:white
-        }
+            color:white}
+        .yellow{
+            color:yellow}
+        .star-rating {direction: rtl;
+                  display: inline-flex;
+                color:white}
+
+       .star-rating input[type="radio"] {
+    display: none;}
+       .star-rating label {
+    font-size: 2rem;
+    color: #d5c810;
+    cursor: pointer;
+    position: relative;
+    padding: 0 1rem; /* Add padding to create space between stars */
+
+}
+
+.star-rating label::before {
+    content: "\2605"; /* Unicode star character */
+    position: absolute;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+    color: #f5b301;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input[type="radio"]:checked ~ label:hover,
+.star-rating input[type="radio"]:checked ~ label:hover ~ label,
+.star-rating input[type="radio"]:checked ~ label:hover ~ input[type="radio"]:checked ~ label {
+    color: #f5b301;
+}
+
+        
        </style>
       <nav class="navbar bg-body-tertiary fixed-top">
        <div class="container-fluid">
@@ -71,17 +105,27 @@
        </div>
    </nav>
 <body>
+    
     <div style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
         <h1 class="white">Rate Influencer</h1>
             <form method="post" class="card p-5" style="margin-top: 5%; margin-left: 5%; margin-right: 5%;">
                 <h3><sup>Id:{{i.inf_id}}</sup></h3>
                 <h3>{{i.inf_name}}</h3>
                 <img id="image" src="/static/{{ i.inf_id }}.jpeg" alt="profile picture">
-                <label class="form-label" for="rating">Enter the rating on a scale of 0 to 10:</label>
+                <!--<label class="form-label" for="rating">Enter the rating on a scale of 0 to 10:</label>
                 <input class="form-control" type="number" name="rating" id="rating" min="0", max="10", step="0.1" required>
                 <input type="number" value="{{i.inf_id}}" readonly hidden name="inf_id">     
-                <button type="submit" class="btn btn-primary">Submit rating</button>  
+                <button type="submit" class="btn btn-primary">Submit rating</button>  -->
+                <div class="star-rating"> 
+                    <input type="radio" id="star5" name="rating" value="5" class="yellow"/><label for="star5" title="5 stars">. </label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars">.</label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars">.</label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars">.</label>
+                   <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star">.</label> 
+                </div>
+                   <button type="submit" class="btn btn-primary">Submit rating</button>  
+                 </div>
             </form>
-    </div>
+           
 </body>
 </html>

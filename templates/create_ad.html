@@ -80,10 +80,15 @@
         <form method="post">
                 <label for="adreq_name" class="form-label white">Adreq name</label>
                 <input type="text" class="form-control " id="adreq_name" name="adreq_name" required>
-              <label for="camp_id" class="form-label white">Campaign Id</label>
-              <input type="text" class="form-control" id="camp_id" name="camp_id" required>
-                <label for="inf_id" class="form-label white">Influencer id</label>
-                <input type="text" class="form-control" id="inf_id" name="inf_id" required>  
+                <label for="camp_id" class="form-label white">Campaign Id</label>
+                <input type="text" class="form-control" id="camp_id" name="camp_id" required>
+                 <label for="inf_id" class="form-label white">Influencer id</label>
+                 <select class="form-control" id="inf_id" name="inf_id" required>
+                 {% for i in infs %}
+                 <option value="{{ i.inf_id }}">{{ i.inf_id }}</option>
+                 {% endfor %}
+                 </select>
+                <!--<input type="text" class="form-control" id="inf_id" name="inf_id" required>  -->
                 <label for="requirements" class="form-label white">Requirements</label>
                 <input type="text" class="form-control" id="requirements" name="requirements" required>
                 <label for="pay_amount" class="form-label white">Payment amount</label>

@@ -51,6 +51,7 @@
         {%else%}
             <div class="card-container">
             {% for i in camp%}
+            {%if i.flagged==0%}
                 <div class="card"  >
                     <div class="card-body">
                         <h5 class="card-title">{{i.camp_id}}:{{i.camp_name}}</h5>
@@ -60,6 +61,7 @@
                         <a href="{{url_for('inf_camp_details', camp_id=i.camp_id,inf_id=inf.inf_id) }}" class="btn btn-primary" type="button">View campaign details</a>
                     </div>
                 </div>
+            {%endif%}
             {%endfor%}
             </div>
          {%endif%}
