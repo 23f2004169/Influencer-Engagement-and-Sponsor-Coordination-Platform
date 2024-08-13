@@ -2,6 +2,8 @@ from flask import current_app as app
 from application.models import *
 from flask import request
 
+#Influencer CRUD
+
 @app.route("/api_read_inf",methods=["GET"])
 def api_read_inf():
     return{"data":[inf.to_json() for inf in Influencer.query.all()]},200
